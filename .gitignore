@@ -1,3 +1,4 @@
 # Visual studio
 .vs
+*.sln
 *.vcxproj*
