@@ -2,3 +2,7 @@
 .vs
 *.sln
 *.vcxproj*
+
+# Binaries
+Bin/
+Bin-int/
