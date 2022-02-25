@@ -10,9 +10,6 @@ KR580VM80A::KR580VM80A()
 	Memory = new uint8_t[MEMORY_SIZE];
 	memset(Memory, 0, MEMORY_SIZE);
 	InitRegisters();
-
-	Memory[0x0900] = 0x02;
-	Memory[0x0901] = 0x07;
 }
 
 KR580VM80A::~KR580VM80A()
@@ -696,6 +693,11 @@ void KR580VM80A::Step()
 	{
 		DWORD data = FetchAddress();
 		BC = data;
+	} break;
+	case LXI_D_d16:
+	{
+		DWORD data = FetchAddress();
+		DE = data;
 	} break;
 	case LXI_H_d16:
 	{
