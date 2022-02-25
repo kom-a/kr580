@@ -2,7 +2,7 @@
 
 #include <inttypes.h>
 
-enum ISA : uint8_t
+enum Opcode : uint8_t
 {
 	ADD_A = 0x87,
 	ADD_B = 0x80,

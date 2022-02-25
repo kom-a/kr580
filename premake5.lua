@@ -22,7 +22,7 @@ project "Emulator"
 
     includedirs
     {
-        "Compiler/src/include"
+        "Shared/Include"
     }
 
     libdirs 
@@ -57,6 +57,11 @@ project "Compiler"
         "%{prj.name}/src/**.hpp",
         "%{prj.name}/src/**.c",
         "%{prj.name}/src/**.cpp",
+    }
+
+    includedirs
+    {
+        "Shared/Include"
     }
 
     filter "configurations:Debug"
