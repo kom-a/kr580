@@ -98,6 +98,7 @@ enum Opcode : uint8_t
 	LDAX_D = 0x1A,
 	LHLD_a16 = 0x2A,
 	LXI_B_d16 = 0x01,
+	LXI_D_d16 = 0x11,
 	LXI_H_d16 = 0x21,
 	LXI_SP_d16 = 0x31,
 	MOV_A_A = 0x7F,
