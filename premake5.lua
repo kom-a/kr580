@@ -97,7 +97,7 @@ project "GLFW"
 
     includedirs
     {
-        "%{prj.name}/include"
+        "%{prj.name}/include",
     }
 
     filter "configurations:Debug"
@@ -130,14 +130,22 @@ project "UMPK-80"
 
     files 
     { 
-        "%{prj.name}/src/**.*"
+        "%{prj.name}/src/**.*",
+        "%{prj.name}/vendor/imgui/imgui/*.*",
+        "%{prj.name}/vendor/glad/src/**.*",
+        "%{prj.name}/vendor/imgui/imgui/backends/imgui_impl_glfw.*",
+        "%{prj.name}/vendor/imgui/imgui/backends/imgui_impl_opengl3.*",
     }
 
     includedirs
     {
         "Compiler",
         "Emulator",
-        "GLFW/include"
+        "GLFW/include",
+        "%{prj.name}/vendor/imgui",
+        "%{prj.name}/vendor/imgui/imgui",
+        "%{prj.name}/vendor/imgui/imgui/backends",
+        "%{prj.name}/vendor/glad/include",
     }
 
     links
