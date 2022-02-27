@@ -6,7 +6,7 @@ outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 
 project "Emulator"
     location "Emulator"
-    kind "ConsoleApp"
+    kind "StaticLib"
     language "C++"
 
     targetdir ("Bin/" .. outputdir .. "/%{prj.name}")
@@ -14,15 +14,15 @@ project "Emulator"
 
     files 
     { 
-        "%{prj.name}/src/**.h",
-        "%{prj.name}/src/**.hpp",
-        "%{prj.name}/src/**.c",
-        "%{prj.name}/src/**.cpp",
+        "%{prj.name}/src/**.*",
+        "%{prj.name}/%{prj.name}.h"
     }
 
     includedirs
     {
-        "Shared/Include"
+        "Shared/Include/",
+        "Compiler/",
+        "%{prj.name}/src/"
     }
 
     libdirs 
@@ -53,15 +53,96 @@ project "Compiler"
 
     files 
     { 
-        "%{prj.name}/src/**.h",
-        "%{prj.name}/src/**.hpp",
-        "%{prj.name}/src/**.c",
-        "%{prj.name}/src/**.cpp",
+        "%{prj.name}/src/**.*",
+        "%{prj.name}/%{prj.name}.h"
     }
 
     includedirs
     {
-        "Shared/Include"
+        "Shared/Include",
+        "%{prj.name}/src"
+
+    }
+
+    filter "configurations:Debug"
+        defines { "DEBUG" }
+        symbols "On"
+
+    filter "configurations:Release"
+        defines { "NDEBUG" }
+        optimize "On"
+
+project "GLFW"
+    location "GLFW"
+    kind "StaticLib"
+    language "C++"
+
+    targetdir ("Bin/" .. outputdir .. "/%{prj.name}")
+    objdir ("Bin-int/" .. outputdir .. "/%{prj.name}")
+
+    files 
+    { 
+        "%{prj.name}/src/null*.*",
+        "%{prj.name}/src/context.*",
+        "%{prj.name}/src/egl_context.*",
+        "%{prj.name}/src/init.*",
+        "%{prj.name}/src/input.*",
+        "%{prj.name}/src/monitor.*",
+        "%{prj.name}/src/osmesa_context.*",
+        "%{prj.name}/src/vulkan.*",
+        "%{prj.name}/src/wgl_context.*",
+        "%{prj.name}/src/window.*",
+        "%{prj.name}/src/platform.*",
+    }
+
+    includedirs
+    {
+        "%{prj.name}/include"
+    }
+
+    filter "configurations:Debug"
+        defines { "DEBUG" }
+        symbols "On"
+
+    filter "configurations:Release"
+        defines { "NDEBUG" }
+        optimize "On"
+
+    filter "system:Windows"
+        defines { "_GLFW_WIN32 " }
+        files "%{prj.name}/src/win32*.c"
+
+    filter "system:Unix"
+        defines { "_GLFW_X11 " }
+        files "%{prj.name}/src/x11*.c"
+
+    filter "system:Mac"
+        defines { "_GLFW_COCOA " }
+        files "%{prj.name}/src/cocoa*.c"
+
+project "UMPK-80"
+    location "UMPK-80"
+    kind "ConsoleApp"
+    language "C++"
+
+    targetdir ("Bin/" .. outputdir .. "/%{prj.name}")
+    objdir ("Bin-int/" .. outputdir .. "/%{prj.name}")
+
+    files 
+    { 
+        "%{prj.name}/src/**.*"
+    }
+
+    includedirs
+    {
+        "Compiler",
+        "Emulator",
+        "GLFW/include"
+    }
+
+    links
+    {
+        "GLFW"
     }
 
     filter "configurations:Debug"

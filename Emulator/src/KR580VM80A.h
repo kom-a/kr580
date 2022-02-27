@@ -3,8 +3,6 @@
 #include <vector>
 #include <inttypes.h>
 
-#include "ISA.h"
-
 #define WORD uint8_t
 #define DWORD uint16_t
 #define MEMORY_SIZE 65536

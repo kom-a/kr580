@@ -1,6 +1,7 @@
 #include <iostream>
 #include <assert.h>
 #include "KR580VM80A.h"
+
 #include "ISA.h"
 
 #define PAIR(high, low) (((DWORD)high << 8) | low)
