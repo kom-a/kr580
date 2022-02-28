@@ -65,8 +65,11 @@ int main()
 		ImGui_ImplOpenGL3_NewFrame();
 		ImGui_ImplGlfw_NewFrame();
 		ImGui::NewFrame();
+		ImGui::DockSpaceOverViewport();
 
 		ImGui::ShowDemoWindow();
+		ImGui::ShowAboutWindow();
+		ImGui::ShowMetricsWindow();
 
 		// Rendering
 		ImGui::Render();
