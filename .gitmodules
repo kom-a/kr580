@@ -1,7 +1,7 @@
-[submodule "GLFW"]
-	path = GLFW
-	url = https://github.com/glfw/glfw
 [submodule "UMPK-80/vendor/imgui/imgui"]
 	path = UMPK-80/vendor/imgui/imgui
 	url = https://github.com/ocornut/imgui
 	branch = docking
+[submodule "UMPK-80/vendor/GLFW"]
+	path = UMPK-80/vendor/GLFW
+	url = https://github.com/glfw/glfw

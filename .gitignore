@@ -6,6 +6,3 @@
 # Binaries
 Bin/
 Bin-int/
-
-# Submodule projects
-GLFW/

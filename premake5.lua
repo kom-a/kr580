@@ -73,7 +73,7 @@ project "Compiler"
         optimize "On"
 
 project "GLFW"
-    location "GLFW"
+    location "UMPK-80/vendor/GLFW"
     kind "StaticLib"
     language "C++"
 
@@ -82,22 +82,22 @@ project "GLFW"
 
     files 
     { 
-        "%{prj.name}/src/null*.*",
-        "%{prj.name}/src/context.*",
-        "%{prj.name}/src/egl_context.*",
-        "%{prj.name}/src/init.*",
-        "%{prj.name}/src/input.*",
-        "%{prj.name}/src/monitor.*",
-        "%{prj.name}/src/osmesa_context.*",
-        "%{prj.name}/src/vulkan.*",
-        "%{prj.name}/src/wgl_context.*",
-        "%{prj.name}/src/window.*",
-        "%{prj.name}/src/platform.*",
+        "%{prj.location}/src/null*.*",
+        "%{prj.location}/src/context.*",
+        "%{prj.location}/src/egl_context.*",
+        "%{prj.location}/src/init.*",
+        "%{prj.location}/src/input.*",
+        "%{prj.location}/src/monitor.*",
+        "%{prj.location}/src/osmesa_context.*",
+        "%{prj.location}/src/vulkan.*",
+        "%{prj.location}/src/wgl_context.*",
+        "%{prj.location}/src/window.*",
+        "%{prj.location}/src/platform.*",
     }
 
     includedirs
     {
-        "%{prj.name}/include",
+        "%{prj.location}/include",
     }
 
     filter "configurations:Debug"
@@ -110,15 +110,15 @@ project "GLFW"
 
     filter "system:Windows"
         defines { "_GLFW_WIN32 " }
-        files "%{prj.name}/src/win32*.c"
+        files "%{prj.location}/src/win32*.c"
 
     filter "system:Unix"
         defines { "_GLFW_X11 " }
-        files "%{prj.name}/src/x11*.c"
+        files "%{prj.location}/src/x11*.c"
 
     filter "system:Mac"
         defines { "_GLFW_COCOA " }
-        files "%{prj.name}/src/cocoa*.c"
+        files "%{prj.location}/src/cocoa*.c"
 
 project "UMPK-80"
     location "UMPK-80"
@@ -141,11 +141,11 @@ project "UMPK-80"
     {
         "Compiler",
         "Emulator",
-        "GLFW/include",
         "%{prj.name}/vendor/imgui",
         "%{prj.name}/vendor/imgui/imgui",
         "%{prj.name}/vendor/imgui/imgui/backends",
         "%{prj.name}/vendor/glad/include",
+        "%{prj.name}/vendor/GLFW/include",
     }
 
     links
