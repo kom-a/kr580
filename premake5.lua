@@ -1,6 +1,7 @@
 workspace "KR580VM80A"
    configurations { "Debug", "Release" }
    architecture "x86"
+   startproject "UMPK-80"
 
 outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 
