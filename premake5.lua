@@ -151,7 +151,8 @@ project "UMPK-80"
 
     links
     {
-        "GLFW"
+        "GLFW",
+        "Emulator"
     }
 
     filter "configurations:Debug"

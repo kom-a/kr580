@@ -30,7 +30,7 @@ private:
 	void Push(DWORD value);
 	DWORD Pop();
 
-private:
+public:
 	uint8_t* Memory;
 
 	// A, F - PSW
