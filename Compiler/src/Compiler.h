@@ -2,6 +2,8 @@
 
 #include <string>
 #include <cinttypes>
+#include "ISA.h"
+#include "Parser/Parser.h"
 
 struct CompileError
 {
@@ -10,6 +12,8 @@ struct CompileError
 	std::string Message;
 };
 
-bool Compile(uint8_t* memory);
-
-CompileError GetError();
+class Compiler 
+{
+public:
+	void Compile(std::string source);
+};
