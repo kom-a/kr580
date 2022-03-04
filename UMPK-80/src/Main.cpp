@@ -43,6 +43,7 @@ int main()
 	window->Add(new Tools(emu));*/
 
 	window->Add(new MemoryView());
+	window->Add(new StackView());
 
 	while (!window->Closed())
 	{

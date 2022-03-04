@@ -6,6 +6,10 @@
 #define WORD uint8_t
 #define DWORD uint16_t
 #define MEMORY_SIZE 65536
+#define USER_MEMORY_OFFSET 0x0800
+#define USER_MEMORY_SIZE (0x0B80 - USER_MEMORY_OFFSET)
+#define STACK_OFFSET 0x0BB1
+#define STACK_SIZE (0x0BFF - STACK_OFFSET)
 
 enum Opcode : uint8_t;
 

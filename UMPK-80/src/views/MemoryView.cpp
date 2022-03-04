@@ -14,5 +14,5 @@ MemoryView::~MemoryView()
 void MemoryView::Render(KR580VM80A* emu)
 {
 	if(m_MemoryEditor.Open)
-		m_MemoryEditor.DrawWindow("Memory Editor", emu->Memory, MEMORY_SIZE);
+		m_MemoryEditor.DrawWindow("Memory Editor", emu->Memory + USER_MEMORY_OFFSET, USER_MEMORY_SIZE);
 }
