@@ -11,6 +11,7 @@ KR580VM80A::KR580VM80A()
 	Memory = new uint8_t[MEMORY_SIZE];
 	memset(Memory, 0, MEMORY_SIZE);
 	InitRegisters();
+	Running = false;
 }
 
 KR580VM80A::~KR580VM80A()
@@ -1198,6 +1199,7 @@ void KR580VM80A::Step()
 	{
 		Push(PC);
 		PC = 1 * 0x08;
+		Running = false;
 	} break;
 	case RST_2:
 	{

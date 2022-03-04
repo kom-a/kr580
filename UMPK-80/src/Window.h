@@ -17,7 +17,7 @@ public:
 
 public:
 	void Update();
-	void Render();
+	void Render(KR580VM80A* emu);
 	void Add(View* view);
 
 public:

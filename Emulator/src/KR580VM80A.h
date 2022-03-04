@@ -32,6 +32,7 @@ private:
 
 public:
 	uint8_t* Memory;
+	bool Running;
 
 	// A, F - PSW
 	union

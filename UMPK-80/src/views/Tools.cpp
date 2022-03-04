@@ -19,6 +19,11 @@ void Tools::Render()
 		m_Emulator->Step();
 	}
 
+	if (ImGui::Button("Run"))
+	{
+		m_Emulator->Running = true;
+	}
+
 	ImGui::End();
 }
 

@@ -5,10 +5,8 @@
 class View
 {
 public:
-	View(KR580VM80A* emulator);
+	View() = default;
+	virtual ~View() = default;
 
-	virtual void Render() = 0;
-
-protected:
-	KR580VM80A* m_Emulator;
+	virtual void Render(KR580VM80A* emu) = 0;
 };

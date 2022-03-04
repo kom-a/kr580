@@ -42,7 +42,7 @@ bool Window::Init()
 	if (m_GLFWWindow == NULL)
 		return false;
 	glfwMakeContextCurrent(m_GLFWWindow);
-	glfwSwapInterval(1);
+	//glfwSwapInterval(1);
 
 	InitImGui();
 
@@ -88,7 +88,7 @@ void Window::Update()
 	glfwSwapBuffers(m_GLFWWindow);
 }
 
-void Window::Render()
+void Window::Render(KR580VM80A* emu)
 {
 	ImGui_ImplOpenGL3_NewFrame();
 	ImGui_ImplGlfw_NewFrame();
@@ -96,9 +96,10 @@ void Window::Render()
 	ImGui::DockSpaceOverViewport();
 
 	ImGui::ShowDemoWindow();
+	ImGui::ShowMetricsWindow();
 
 	for (View* view : m_Views)
-		view->Render();
+		view->Render(emu);
 }
 
 void Window::Add(View* view)
