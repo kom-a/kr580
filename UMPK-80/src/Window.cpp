@@ -43,7 +43,7 @@ bool Window::Init()
 	if (m_GLFWWindow == NULL)
 		return false;
 	glfwMakeContextCurrent(m_GLFWWindow);
-	//glfwSwapInterval(1);
+	glfwSwapInterval(1);
 
 	InitImGui();
 
@@ -95,6 +95,37 @@ void Window::Render(KR580VM80A* emu)
 	ImGui_ImplGlfw_NewFrame();
 	ImGui::NewFrame();
 	ImGui::DockSpaceOverViewport();
+
+	if (ImGui::BeginMainMenuBar())
+	{
+		if (ImGui::BeginMenu("File"))
+		{
+			if (ImGui::MenuItem("New"))
+			{
+				//Do something
+			}
+			ImGui::EndMenu();
+		}
+
+		if (ImGui::BeginMenu("View"))
+		{
+			if (ImGui::MenuItem("Editor"))
+			{
+				//Do something
+			}
+			if (ImGui::MenuItem("Memory"))
+			{
+				//Do something
+			}
+			if (ImGui::MenuItem("Stack"))
+			{
+				//Do something
+			}
+			ImGui::EndMenu();
+		}
+
+		ImGui::EndMainMenuBar();
+	}
 
 	ImGui::ShowDemoWindow();
 	ImGui::ShowMetricsWindow();

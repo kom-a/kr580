@@ -12,7 +12,11 @@ Toolbar::~Toolbar()
 
 void Toolbar::Render(KR580VM80A* emu)
 {
-	ImGui::Begin("##toolbar", nullptr, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse | ImGuiDockNodeFlags_AutoHideTabBar);
+	ImGui::Begin("##toolbar", nullptr, ImGuiWindowFlags_NoDecoration | 
+		ImGuiWindowFlags_NoTitleBar | 
+		ImGuiWindowFlags_NoCollapse | 
+		ImGuiWindowFlags_NoScrollbar | 
+		ImGuiWindowFlags_NoScrollWithMouse);
 
 	if (ImGui::Button("Load"))
 	{

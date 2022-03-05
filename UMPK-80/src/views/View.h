@@ -9,4 +9,7 @@ public:
 	virtual ~View() = default;
 
 	virtual void Render(KR580VM80A* emu) = 0;
+
+protected:
+	bool m_Open = true;
 };

@@ -15,10 +15,10 @@ MemoryView::~MemoryView()
 
 void MemoryView::Render(KR580VM80A* emu)
 {
-	if (!m_MemoryEditor.Open)
+	if (!m_Open)
 		return;
 
-	ImGui::Begin("Memory");
+	ImGui::Begin("Memory", &m_Open);
 
 	m_MemoryEditor.DrawContents(emu->Memory + USER_MEMORY_OFFSET, USER_MEMORY_SIZE, USER_MEMORY_OFFSET);
 
