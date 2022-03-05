@@ -15,4 +15,5 @@ public:
 
 private:
 	TextEditor m_Editor;
+	bool m_Open;
 };

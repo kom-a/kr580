@@ -22,19 +22,12 @@ int main()
 	KR580VM80A* emu = new KR580VM80A();
 
 	std::vector<WORD> program = {
-		MVI_A_d8, 0x00,
-		MVI_H_d8, 0x00,
-		MVI_L_d8, 0x00,
-		MOV_M_A,
-		INR_A,
-		INX_H,
+		LDA_a16, 0x00, 0x09,
 		MOV_B_A,
-		MOV_A_H,
-		CPI_d8, 0x08,
-		MOV_A_B,
-		JNZ_a16, 0x06, 0x08,
-		
-		RST_1
+		LDA_a16, 0x01, 0x09,
+		ADD_B,
+		STA_a16, 0x02, 0x09,
+		RST_1,
 	};
 	
 	emu->LoadProgram(program);
@@ -42,6 +35,7 @@ int main()
 	/*window->Add(new Registers(emu));
 	window->Add(new Tools(emu));*/
 
+	window->Add(new Toolbar());
 	window->Add(new MemoryView());
 	window->Add(new StackView());
 	window->Add(new EditorView());
