@@ -44,6 +44,7 @@ int main()
 
 	window->Add(new MemoryView());
 	window->Add(new StackView());
+	window->Add(new EditorView());
 
 	while (!window->Closed())
 	{

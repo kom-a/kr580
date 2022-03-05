@@ -136,6 +136,7 @@ project "UMPK-80"
         "%{prj.name}/vendor/glad/src/**.*",
         "%{prj.name}/vendor/imgui/imgui/backends/imgui_impl_glfw.*",
         "%{prj.name}/vendor/imgui/imgui/backends/imgui_impl_opengl3.*",
+        "%{prj.name}/vendor/imgui/ImGuiColorTextEdit/*.cpp"
     }
 
     includedirs
