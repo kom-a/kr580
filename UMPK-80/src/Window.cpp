@@ -43,7 +43,7 @@ bool Window::Init()
 	if (m_GLFWWindow == NULL)
 		return false;
 	glfwMakeContextCurrent(m_GLFWWindow);
-	glfwSwapInterval(1);
+	glfwSwapInterval(0);
 
 	InitImGui();
 

@@ -121,7 +121,8 @@ EditorView::EditorView()
 	lang.mKeywords.insert("RRC");
 	lang.mKeywords.insert("RET");
 	lang.mKeywords.insert("POP");
-
+	lang.mKeywords.insert("STA");
+	lang.mKeywords.insert("ADD");
 
 
 	const char* const identifiers[] = {

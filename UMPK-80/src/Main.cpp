@@ -27,7 +27,7 @@ int main()
 		LDA_a16, 0x01, 0x09,
 		ADD_B,
 		STA_a16, 0x02, 0x09,
-		RST_1,
+		JMP_a16, 0x00, 0x08
 	};
 	
 	emu->LoadProgram(program);
@@ -39,6 +39,7 @@ int main()
 	window->Add(new MemoryView());
 	window->Add(new StackView());
 	window->Add(new EditorView());
+	window->Add(new RegistersView());
 
 	while (!window->Closed())
 	{
