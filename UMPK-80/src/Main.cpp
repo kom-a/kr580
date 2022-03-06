@@ -29,6 +29,7 @@ int main()
 		STA_a16, 0x02, 0x09,
 		JMP_a16, 0x00, 0x08
 	};
+
 	
 	emu->LoadProgram(program);
 
