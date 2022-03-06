@@ -20,7 +20,7 @@ void StackView::Render(KR580VM80A* emu)
 
 	ImGui::Begin("Stack", &m_Open);
 
-	m_MemoryEditor.DrawContents(emu->Memory + STACK_OFFSET, STACK_SIZE, STACK_OFFSET);
+	m_MemoryEditor.DrawContents(emu->Memory + STACK_OFFSET, STACK_SIZE, STACK_OFFSET, emu->SP);
 
 	ImGui::End();
 }
