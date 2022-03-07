@@ -1,13 +1,13 @@
 #pragma once
 #include<string>
 std::string Register[]{
-	"A",
-	"B",
-	"C",
-	"D",
-	"E",
-	"H",
-	"L",
-	"M",
-	"SP"
+	"a",
+	"b",
+	"c",
+	"d",
+	"e",
+	"h",
+	"l",
+	"m",
+	"sp"
 };
