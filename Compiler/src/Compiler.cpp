@@ -41,12 +41,15 @@ void Compiler::Compile(std::string source)
 
 
 	toLower(source);
-	auto tokens = stringToTokenVector(source);
+	auto tokens = stringToTokenVector(source + '\n');
 	for (int i = 0; i < tokens.size(); i++)
 	{
 		try
 		{
-			tmp.push_back(Parse(tokens[i]));
+			for (auto byte: Parse(tokens[i]))
+			{
+				tmp.push_back(byte);
+			}
 		}
 		catch (const std::exception& ex)
 		{

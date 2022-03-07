@@ -38,4 +38,4 @@ std::vector<std::string> tokenizeCommand(std::string source);
 
 
 ///Parses given string and returns its opcode
-uint8_t Parse(std::string source);
+std::vector<uint8_t> Parse(std::string source);
