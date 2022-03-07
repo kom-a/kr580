@@ -42,18 +42,22 @@ void Compiler::Compile(std::string source)
 
 	toLower(source);
 	auto tokens = stringToTokenVector(source + '\n');
+	std::vector<uint8_t> bytes;
 	for (int i = 0; i < tokens.size(); i++)
 	{
 		try
 		{
-			for (auto byte: Parse(tokens[i]))
-			{
-				tmp.push_back(byte);
-			}
+			bytes = Parse(tokens[i]);
 		}
-		catch (const std::exception& ex)
+		catch (std::string ex)
 		{
-			compileErrors.RaiseError(i + 1, ex.what());
+			errorOccured = true;
+			compileErrors.RaiseError(i + 1, ex);
+		}
+
+		for (auto byte : bytes)
+		{
+			tmp.push_back(byte);
 		}
 	}
 	if (!errorOccured)

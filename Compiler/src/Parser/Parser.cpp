@@ -213,7 +213,7 @@ std::vector<uint8_t> Parse(std::string source)
 
 			if (!protorypeExists(tokens[0], argType1, argType2))
 			{
-				throw("Error unknown command");
+				throw("Error unknown command \'" + tokens[0] + "\'");
 			}
 			else
 			{
@@ -225,21 +225,21 @@ std::vector<uint8_t> Parse(std::string source)
 
 				int8_t code = getCommandOpcode(tokens[0] + "_" + argType1 + "_" + argType2);
 				if (code == -1)
-					throw("Unknown command");
+					throw("Unknown command \'" + tokens[0] + "\'");
 				res.push_back(code);
 				if(argType1 == "d8")
-					res.push_back(atoi(tokens[1].c_str()));
+					res.push_back((uint8_t)strtol(tokens[1].c_str(), nullptr, 16));
 				else if (argType1 == "d16")
 				{
-					res.push_back(atoi(tokens[1].substr(2).c_str()));
-					res.push_back(atoi(tokens[1].substr(0, 2).c_str()));
+					res.push_back((uint8_t)strtol(tokens[1].substr(2).c_str(), nullptr, 16));
+					res.push_back((uint8_t)strtol(tokens[1].substr(0, 2).c_str(), nullptr, 16));
 				}
 				if (argType2 == "d8")
-					res.push_back(atoi(tokens[2].c_str()));
+					res.push_back((uint8_t)strtol(tokens[2].c_str(), nullptr, 16));
 				else if (argType2 == "d16")
 				{
-					res.push_back(atoi(tokens[2].substr(2).c_str()));
-					res.push_back(atoi(tokens[2].substr(0, 2).c_str()));
+					res.push_back((uint8_t)strtol(tokens[2].substr(2).c_str(), nullptr, 16));
+					res.push_back((uint8_t)strtol(tokens[2].substr(0, 2).c_str(), nullptr, 16));
 				}
 
 			}
@@ -258,7 +258,7 @@ std::vector<uint8_t> Parse(std::string source)
 
 			if (!protorypeExists(tokens[0], argType, ""))
 			{
-				throw("Error unknown command");
+				throw("Error unknown command \'" + tokens[0] + "\'");
 			}
 			else
 			{
@@ -266,14 +266,14 @@ std::vector<uint8_t> Parse(std::string source)
 					argType = tokens[1];
 				int8_t code = getCommandOpcode(tokens[0] + "_" + argType);
 				if (code == -1)
-					throw("Unknown command");
+					throw("Unknown command \'" + tokens[0] + "\'");
 				res.push_back(code);
 				if (argType == "d8")
-					res.push_back(atoi(tokens[1].c_str()));
+					res.push_back((uint8_t)strtol(tokens[1].c_str(), nullptr, 16));
 				else if (argType == "d16")
 				{
-					res.push_back(atoi(tokens[1].substr(2).c_str()));
-					res.push_back(atoi(tokens[1].substr(0, 2).c_str()));
+					res.push_back((uint8_t)strtol(tokens[1].substr(2).c_str(), nullptr, 16));
+					res.push_back((uint8_t)strtol(tokens[1].substr(0, 2).c_str(), nullptr, 16));
 				}
 					
 			}
@@ -288,14 +288,14 @@ std::vector<uint8_t> Parse(std::string source)
 				}
 				else
 				{
-					throw("Error unknown command");
+					throw("Error unknown command \'" + tokens[0] + "\'");
 				}
 			}
 			else
 			{
 				int8_t code = getCommandOpcode(tokens[0]);
 				if (code == -1)
-					throw("Unknown command");
+					throw("Unknown command \'" + tokens[0] + "\'");
 				res.push_back(code);
 			}
 		}

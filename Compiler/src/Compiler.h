@@ -8,9 +8,8 @@
 
 struct CompileError
 {
-private:
-	std::vector<std::tuple<int, std::string>> messages;
 public:
+	std::vector<std::tuple<int, std::string>> messages;
 	inline void ClearMessages() { messages.clear(); };
 	void RaiseError(int line, std::string message);
 };

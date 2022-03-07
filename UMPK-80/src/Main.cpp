@@ -35,7 +35,7 @@ int main()
 	std::string source = "mvi a, 02\n"
 		"mvi b, 03\n"
 		"add b\n"
-		"sta 0820\n"
+		"sta1 08FB\n"
 		"rst1";
 	Compiler compiler;
 
@@ -44,7 +44,10 @@ int main()
 	compiler.Compile(source);
 	if (compiler.errorOccured)
 	{
-		std::cout << "An error occurred" << std::endl;
+		for (auto error : compiler.compileErrors.messages)
+		{
+			std::cout << "line: " << std::get<0>(error) << " " << std::get<1>(error);
+		}
 		return -1;
 	}
 
