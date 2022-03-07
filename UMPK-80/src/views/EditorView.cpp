@@ -92,7 +92,6 @@ EditorView::EditorView()
 	m_Open = true;
 
 	m_Editor.SetShowWhitespaces(false);
-	m_Editor.SetText(testProgram);
 	TextEditor::ErrorMarkers markers;
 	markers.insert(std::make_pair<int, std::string>(6, "Unknown operation"));
 	m_Editor.SetErrorMarkers(markers);

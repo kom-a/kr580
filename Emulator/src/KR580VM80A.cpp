@@ -25,8 +25,8 @@ void KR580VM80A::InitRegisters()
 	BC = 0;
 	DE = 0;
 	HL = 0;
-	SP = 0x0BAF; // this should be initialized to 0x0BB0 ???
-	PC = 0x0800;
+	SP = STACK_OFFSET + STACK_SIZE; // -1 ???
+	PC = USER_MEMORY_OFFSET;
 	Flag.D1 = 1;
 }
 
@@ -93,6 +93,7 @@ DWORD KR580VM80A::Pop()
 {
 	WORD low = Memory[SP];
 	WORD high = Memory[SP + 1];
+	SP += 2;
 
 	return PAIR(high, low);
 }
@@ -1197,8 +1198,8 @@ void KR580VM80A::Step()
 	} break;
 	case RST_1:
 	{
-		Push(PC);
-		PC = 1 * 0x08;
+		// Push(PC);
+		// PC = 1 * 0x08;
 		Running = false;
 	} break;
 	case RST_2:

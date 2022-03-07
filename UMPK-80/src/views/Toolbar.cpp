@@ -36,6 +36,7 @@ void Toolbar::Render(KR580VM80A* emu)
 	if (ImGui::Button("Reset"))
 	{
 		emu->PC = USER_MEMORY_OFFSET;
+		emu->SP = STACK_OFFSET + STACK_SIZE;
 	}
 
 	ImGui::End();
