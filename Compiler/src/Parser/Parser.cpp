@@ -175,8 +175,9 @@ void normalize(std::string& source)
 	deleteMultipleSpaces(source);
 }
 
-uint8_t Parse(std::string source)
+std::vector<uint8_t> Parse(std::string source)
 {
+	std::vector<uint8_t> res;
 	normalize(source);
 	if (notJustSpaces(source))
 	{
@@ -225,7 +226,12 @@ uint8_t Parse(std::string source)
 				int8_t code = getCommandOpcode(tokens[0] + "_" + argType1 + "_" + argType2);
 				if (code == -1)
 					throw("Unknown command");
-				return code;
+				res.push_back(code);
+				if(argType1 == "d8" || argType1 == "d16")
+					res.push_back(atoi(tokens[1].c_str()));
+				if (argType2 == "d8" || argType2 == "d16")
+					res.push_back(atoi(tokens[2].c_str()));
+
 			}
 		}
 		else if (size == 2)		// 1 arg command
@@ -251,7 +257,9 @@ uint8_t Parse(std::string source)
 				int8_t code = getCommandOpcode(tokens[0] + "_" + argType);
 				if (code == -1)
 					throw("Unknown command");
-				return code;
+				res.push_back(code);
+				if (argType == "d8" || argType == "d16")
+					res.push_back(atoi(tokens[1].c_str()));
 			}
 		}
 		else if (size == 1)		// 0 args command
@@ -272,7 +280,7 @@ uint8_t Parse(std::string source)
 				int8_t code = getCommandOpcode(tokens[0]);
 				if (code == -1)
 					throw("Unknown command");
-				return code;
+				res.push_back(code);
 			}
 		}
 		else
@@ -281,4 +289,5 @@ uint8_t Parse(std::string source)
 			throw("Unknown Error");
 		}
 	}
+	return res;
 }
