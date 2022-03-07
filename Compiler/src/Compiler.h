@@ -2,7 +2,6 @@
 
 #include <string>
 #include <cinttypes>
-#include "ISA.h"
 #include <vector>
 #include <tuple>
 #include "Parser/Parser.h"

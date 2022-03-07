@@ -16,6 +16,8 @@
 #include "Window.h"
 #include "Views.h"
 
+#include "src/Compiler.h"
+
 int main()
 {
 	Window* window = new Window(1280 / 1.5f, 720 / 1.5f, "UMPK-80");
@@ -30,6 +32,23 @@ int main()
 		JMP_a16, 0x00, 0x08
 	};
 
+	std::string source = "mvi a, 02\n"
+		"mvi b, 03\n"
+		"add b\n"
+		"sta 0820\n"
+		"rst1";
+	Compiler compiler;
+
+	source += '\n';
+
+	compiler.Compile(source);
+	if (compiler.errorOccured)
+	{
+		std::cout << "An error occurred" << std::endl;
+		return -1;
+	}
+
+	program = compiler.resultBinary;
 	
 	emu->LoadProgram(program);
 

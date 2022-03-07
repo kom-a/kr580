@@ -227,10 +227,20 @@ std::vector<uint8_t> Parse(std::string source)
 				if (code == -1)
 					throw("Unknown command");
 				res.push_back(code);
-				if(argType1 == "d8" || argType1 == "d16")
+				if(argType1 == "d8")
 					res.push_back(atoi(tokens[1].c_str()));
-				if (argType2 == "d8" || argType2 == "d16")
+				else if (argType1 == "d16")
+				{
+					res.push_back(atoi(tokens[1].substr(2).c_str()));
+					res.push_back(atoi(tokens[1].substr(0, 2).c_str()));
+				}
+				if (argType2 == "d8")
 					res.push_back(atoi(tokens[2].c_str()));
+				else if (argType2 == "d16")
+				{
+					res.push_back(atoi(tokens[2].substr(2).c_str()));
+					res.push_back(atoi(tokens[2].substr(0, 2).c_str()));
+				}
 
 			}
 		}
@@ -258,8 +268,14 @@ std::vector<uint8_t> Parse(std::string source)
 				if (code == -1)
 					throw("Unknown command");
 				res.push_back(code);
-				if (argType == "d8" || argType == "d16")
+				if (argType == "d8")
 					res.push_back(atoi(tokens[1].c_str()));
+				else if (argType == "d16")
+				{
+					res.push_back(atoi(tokens[1].substr(2).c_str()));
+					res.push_back(atoi(tokens[1].substr(0, 2).c_str()));
+				}
+					
 			}
 		}
 		else if (size == 1)		// 0 args command

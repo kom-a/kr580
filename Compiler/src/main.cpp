@@ -25,7 +25,14 @@ int main()
 	Compiler compiler;
 	std::ifstream is("C:\\Users\\en9er\\OneDrive\\Рабочий стол\\test.txt");
 	readfile(str, is);
-	compiler.Compile(str);
+
+	std::string source = "mvi a, 02\n"
+		"mvi b, 03\n"
+		"add b\n"
+		"sta 0820\n"
+		"rst1";
+
+	compiler.Compile(source);
 
 	if (!compiler.errorOccured)
 	{
