@@ -5,7 +5,8 @@ MemoryView::MemoryView()
 {
 	m_MemoryEditor.Cols = 1;
 	m_MemoryEditor.OptShowAscii = true;
-	m_MemoryEditor.OptShowOptions = true;
+	m_MemoryEditor.OptShowOptions = false;
+
 }
 
 MemoryView::~MemoryView()

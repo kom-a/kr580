@@ -53,6 +53,8 @@ int main()
 	window->Add(new StackView());
 	window->Add(new EditorView());
 	window->Add(new RegistersView());
+	window->Add(new InPortView());
+	window->Add(new OutPortView());
 
 	while (!window->Closed())
 	{

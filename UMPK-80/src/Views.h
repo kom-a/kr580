@@ -3,3 +3,5 @@
 #include "views/EditorView.h"
 #include "views/RegistersView.h"
 #include "views/Toolbar.h"
+#include "views/InPortView.h"
+#include "views/OutPortView.h"
