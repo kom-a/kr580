@@ -10,6 +10,7 @@
 #define USER_MEMORY_SIZE (0x0B80 - USER_MEMORY_OFFSET)
 #define STACK_OFFSET 0x0B80
 #define STACK_SIZE (0x0BB0 - STACK_OFFSET)
+#define PORTS_SIZE 256
 
 enum Opcode : uint8_t;
 
@@ -36,6 +37,8 @@ private:
 
 public:
 	uint8_t* Memory;
+	uint8_t *In, *Out; // Ports
+	
 	bool Running;
 
 	// A, F - PSW

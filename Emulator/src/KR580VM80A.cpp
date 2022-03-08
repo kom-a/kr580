@@ -9,7 +9,13 @@
 KR580VM80A::KR580VM80A()
 {
 	Memory = new uint8_t[MEMORY_SIZE];
-	memset(Memory, 0, MEMORY_SIZE);
+	In = new uint8_t[PORTS_SIZE];
+	Out = new uint8_t[PORTS_SIZE];
+
+	memset(Memory,	0, MEMORY_SIZE);
+	memset(In,		0, PORTS_SIZE);
+	memset(Out,		0, PORTS_SIZE);
+
 	InitRegisters();
 	Running = false;
 }
@@ -529,8 +535,8 @@ void KR580VM80A::Step()
 	} break;
 	case IN_pp:
 	{
-		// TODO: implement
-		assert(false, "Not implemented");
+		uint8_t port = Fetch();
+		A = In[port];
 	} break;
 	case INR_A:
 	{
@@ -1074,8 +1080,8 @@ void KR580VM80A::Step()
 	} break;
 	case OUT_pp:
 	{
-		// TODO: implement
-		assert(false, "Not implemented");
+		uint8_t port = Fetch();
+		Out[port] = A;
 	} break;
 	case PCHL:
 	{
