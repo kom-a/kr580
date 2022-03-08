@@ -17,7 +17,7 @@ void OutPortView::Render(KR580VM80A* emu)
 	if (!m_Open)
 		return;
 
-	ImGui::Begin("Out port", &m_Open);
+	ImGui::Begin("Out ports", &m_Open);
 
 	m_Editor.DrawContents(emu->Out, PORTS_SIZE);
 

@@ -295,7 +295,7 @@ void KR580VM80A::Step()
 		else
 			PC += 2;
 	} break;
-	case ÑNZ_a16:
+	case CNZ_a16:
 	{
 		if (!Flag.Z)
 		{
@@ -306,7 +306,7 @@ void KR580VM80A::Step()
 		else
 			PC += 2;
 	} break;
-	case ÑP_a16:
+	case CP_a16:
 	{
 		if (Flag.P)
 		{
@@ -317,7 +317,7 @@ void KR580VM80A::Step()
 		else
 			PC += 2;
 	} break;
-	case ÑM_a16:
+	case CM_a16:
 	{
 		if (Flag.S)
 		{
