@@ -1,4 +1,5 @@
 #include "Compiler.h"
+#include "Parser/Parser.h"
 #include<iostream>
 using namespace std;
 
@@ -52,7 +53,7 @@ void Compiler::Compile(std::string source)
 		catch (std::string ex)
 		{
 			errorOccured = true;
-			compileErrors.RaiseError(i + 1, ex);
+			compileErrors.CatchError(i + 1, ex);
 		}
 
 		for (auto byte : bytes)
@@ -64,7 +65,7 @@ void Compiler::Compile(std::string source)
 		resultBinary = tmp;
 }
 
-void CompileError::RaiseError(int line, std::string message)
+void CompileError::CatchError(int line, std::string message)
 {
 	std::tuple<int, std::string> err{line, message};
 	messages.push_back(err);

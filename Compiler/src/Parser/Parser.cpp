@@ -1,6 +1,7 @@
 #include "Parser.h"
 #include "Register/Register.h"
 #include "Command/Command.h"
+#include "ErrorHandler/ErrorHandler.h"
 #include <iostream>
 
 bool isHexLetterOrNumber(char c)
@@ -177,6 +178,7 @@ void normalize(std::string& source)
 
 std::vector<uint8_t> Parse(std::string source)
 {
+	std::string errMessage = "";
 	std::vector<uint8_t> res;
 	normalize(source);
 	if (notJustSpaces(source))
@@ -185,7 +187,7 @@ std::vector<uint8_t> Parse(std::string source)
 		int size = tokens.size();
 		if (size > 3)				//error
 		{
-			throw("More than 2 args gived");
+			RaiseError(ErrorType::INVALID_ARGUMENT_NUM, "more than 2 args gived");
 		}
 		else if (size == 3)  //2 args command
 		{
@@ -200,7 +202,7 @@ std::vector<uint8_t> Parse(std::string source)
 			else if (isData16(tokens[1]))
 				argType1 = "d16";
 			else
-				throw("Unknown argument type");
+				RaiseError(ErrorType::INVALID_ARGUMENT, std::string("unknown argument type of ") + "\'" + tokens[1] + "\'");
 
 			if (isRegister(tokens[2]))
 				argType2 = "reg";
@@ -209,11 +211,11 @@ std::vector<uint8_t> Parse(std::string source)
 			else if (isData16(tokens[2]))
 				argType2 = "d16";
 			else
-				throw("Unknown argument type");
+				RaiseError(ErrorType::INVALID_ARGUMENT, std::string("unknown argument type of ") + "\'" + tokens[2] + "\'");
 
 			if (!protorypeExists(tokens[0], argType1, argType2))
 			{
-				throw("Error unknown command \'" + tokens[0] + "\'");
+				RaiseError(ErrorType::UNKNOWN_COMMAND, "unknown command \'" + tokens[0] + "\'");
 			}
 			else
 			{
@@ -225,7 +227,7 @@ std::vector<uint8_t> Parse(std::string source)
 
 				int8_t code = getCommandOpcode(tokens[0] + "_" + argType1 + "_" + argType2);
 				if (code == -1)
-					throw("Unknown command \'" + tokens[0] + "\'");
+					RaiseError(ErrorType::UNKNOWN_COMMAND, "unknown command \'" + tokens[0] + "\'");
 				res.push_back(code);
 				if(argType1 == "d8")
 					res.push_back((uint8_t)strtol(tokens[1].c_str(), nullptr, 16));
@@ -254,11 +256,11 @@ std::vector<uint8_t> Parse(std::string source)
 			else if (isData16(tokens[1]))
 				argType = "d16";
 			else
-				throw("Unknown argument type");
+				RaiseError(ErrorType::INVALID_ARGUMENT, std::string("unknown argument type of ") + "\'" + tokens[1] + "\'");
 
 			if (!protorypeExists(tokens[0], argType, ""))
 			{
-				throw("Error unknown command \'" + tokens[0] + "\'");
+				RaiseError(ErrorType::UNKNOWN_COMMAND, "unknown command \'" + tokens[0] + "\'");
 			}
 			else
 			{
@@ -266,7 +268,7 @@ std::vector<uint8_t> Parse(std::string source)
 					argType = tokens[1];
 				int8_t code = getCommandOpcode(tokens[0] + "_" + argType);
 				if (code == -1)
-					throw("Unknown command \'" + tokens[0] + "\'");
+					RaiseError(ErrorType::UNKNOWN_COMMAND, "unknown command \'" + tokens[0] + "\'");
 				res.push_back(code);
 				if (argType == "d8")
 					res.push_back((uint8_t)strtol(tokens[1].c_str(), nullptr, 16));
@@ -288,21 +290,20 @@ std::vector<uint8_t> Parse(std::string source)
 				}
 				else
 				{
-					throw("Error unknown command \'" + tokens[0] + "\'");
+					RaiseError(ErrorType::UNKNOWN_COMMAND, "unknown command \'" + tokens[0] + "\'");
 				}
 			}
 			else
 			{
 				int8_t code = getCommandOpcode(tokens[0]);
 				if (code == -1)
-					throw("Unknown command \'" + tokens[0] + "\'");
+					RaiseError(ErrorType::UNKNOWN_COMMAND, "unknown command \'" + tokens[0] + "\'");
 				res.push_back(code);
 			}
 		}
 		else
 		{
-			std::cout << "Unknown error" << std::endl;
-			throw("Unknown Error");
+			RaiseError(ErrorType::UNEXPECTED_ERROR, "unknown error");
 		}
 	}
 	return res;

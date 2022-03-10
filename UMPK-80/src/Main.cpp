@@ -36,7 +36,7 @@ int main()
 		"mvi b, 03\n"
 		"add b\n"
 		"sta1 08FB\n"
-		"rst1";
+		"rst1, 1";
 	Compiler compiler;
 
 	source += '\n';
@@ -46,9 +46,8 @@ int main()
 	{
 		for (auto error : compiler.compileErrors.messages)
 		{
-			std::cout << "line: " << std::get<0>(error) << " " << std::get<1>(error);
+			std::cout << "line: " << std::get<0>(error) << " " << std::get<1>(error) << std::endl;
 		}
-		return -1;
 	}
 
 	program = compiler.resultBinary;
