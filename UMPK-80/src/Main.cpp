@@ -18,6 +18,26 @@
 
 #include "src/Compiler.h"
 
+
+void readfile(std::string& s, std::ifstream& is) {
+	s.erase();
+	if (is.bad()) return;
+	//
+	// attempt to grow string buffer to match file size,
+	// this doesn't always work...
+	s.reserve(is.rdbuf()->in_avail());
+	char c;
+	while (is.get(c))
+	{
+		// use logarithmic growth stategy, in case
+		// in_avail (above) returned zero:
+		if (s.capacity() == s.size())
+			s.reserve(s.capacity() * 3);
+		s.append(1, c);
+	}
+}
+
+
 int main()
 {
 	Window* window = new Window(1280 / 1.5f, 720 / 1.5f, "UMPK-80");
@@ -32,16 +52,12 @@ int main()
 		JMP_a16, 0x00, 0x08
 	};
 
-	std::string source = "mvi a, 02\n"
-		"mvi b, 03\n"
-		"add b\n"
-		"sta1 08FB\n"
-		"rst1, 1";
+	std::string str;
 	Compiler compiler;
+	std::ifstream is("C:\\Users\\en9er\\OneDrive\\Рабочий стол\\test.txt");
+	readfile(str, is);
 
-	source += '\n';
-
-	compiler.Compile(source);
+	compiler.Compile(str, 0x0800);
 	if (compiler.errorOccured)
 	{
 		for (auto error : compiler.compileErrors.messages)

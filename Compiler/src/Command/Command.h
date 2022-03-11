@@ -359,6 +359,10 @@ int8_t getCommandOpcode(std::string command)
 
 bool protorypeExists(std::string command, std::string argument1, std::string argument2)
 {
+    if (argument1 == "label")
+        argument1 = "d16";
+
+
     for (auto comm : Prototypes)
     {
         std::string identifier = std::get<0>(comm);

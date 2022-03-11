@@ -1,6 +1,7 @@
 #pragma once
 #include<vector>
 #include<string>
+#include<map>
 
 enum class States
 {
@@ -38,4 +39,4 @@ std::vector<std::string> tokenizeCommand(std::string source);
 
 
 ///Parses given string and returns its opcode
-std::vector<uint8_t> Parse(std::string source);
+std::vector<uint8_t> Parse(std::string source, std::map<std::string, int>& labels, int currentBytesCount, int offset);  //offset is the position where code starts

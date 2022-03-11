@@ -1,6 +1,7 @@
 #include "Compiler.h"
 #include "Parser/Parser.h"
 #include<iostream>
+#include<map>
 using namespace std;
 
 std::vector<std::string> stringToTokenVector(std::string source)
@@ -32,10 +33,10 @@ void toLower(std::string& source)
 		source[i] = tolower(source[i]);
 	}
 }
-void Compiler::Compile(std::string source)
+void Compiler::Compile(std::string source, int offset)
 {
 	std::vector<uint8_t> tmp;
-
+	std::map<std::string, int> labels;
 	//reset errors
 	compileErrors.ClearMessages();
 	errorOccured = false;
@@ -48,12 +49,12 @@ void Compiler::Compile(std::string source)
 	{
 		try
 		{
-			bytes = Parse(tokens[i]);
+			bytes = Parse(tokens[i], labels, tmp.size(), offset);
 		}
 		catch (std::string ex)
 		{
 			errorOccured = true;
-			compileErrors.CatchError(i + 1, ex);
+			compileErrors.WriteError(i + 1, ex);
 		}
 
 		for (auto byte : bytes)
@@ -65,7 +66,7 @@ void Compiler::Compile(std::string source)
 		resultBinary = tmp;
 }
 
-void CompileError::CatchError(int line, std::string message)
+void CompileError::WriteError(int line, std::string message)
 {
 	std::tuple<int, std::string> err{line, message};
 	messages.push_back(err);
