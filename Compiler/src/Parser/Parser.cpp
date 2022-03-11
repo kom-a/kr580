@@ -190,20 +190,6 @@ std::vector<std::string> tokenizeCommand(std::string source)
 	return res;
 }
 
-int getLabelAddr(std::string label, std::map<std::string, int>& labels) 
-{
-	if (labels.find(label) != labels.end())
-	{
-		return labels[label];
-	}
-	else if(BuilInLabels.find(label) != BuilInLabels.end())
-	{
-		return BuilInLabels[label];
-	}
-	else 
-		return -1;
-}
-
 /// Deletes multiple spaces
 void deleteMultipleSpaces(std::string& source)
 {
@@ -363,14 +349,18 @@ std::vector<uint8_t> Parse(std::string source, std::map<std::string, int>& label
 				}
 				else if (argType == "label")
 				{
-					int addr = getLabelAddr(tokens[1], labels);
-					if (addr != -1)
+					if (labels.find(tokens[1]) != labels.end())
 					{
-						std::stringstream ss;
-						ss << std::hex << (addr + offset);
-						argType = ss.str();
-						res.push_back((uint8_t)strtol(argType.substr(2).c_str(), nullptr, 16));
-						res.push_back((uint8_t)strtol(argType.substr(0, 2).c_str(), nullptr, 16));
+
+						int resAddr = labels[tokens[1]] + offset;
+						res.push_back(resAddr & 0x000000ff);
+						res.push_back((resAddr & 0x0000ff00) >> 8);
+					}
+					else if (BuilInLabels.find(tokens[1]) != BuilInLabels.end())
+					{
+						int resAddr = BuilInLabels[tokens[1]];
+						res.push_back(resAddr & 0x000000ff);
+						res.push_back((resAddr & 0x0000ff00) >> 8);
 					}
 					else
 					{
@@ -392,7 +382,7 @@ std::vector<uint8_t> Parse(std::string source, std::map<std::string, int>& label
 				if (tokens[0].find(':') != -1)
 				{
 					parseLabel(tokens[0]);
-					labels.insert({tokens[0].substr(0, tokens[0].size() - 1), currentBytesCount + 1});
+					labels.insert({tokens[0].substr(0, tokens[0].size() - 1), currentBytesCount});
 				}
 				else
 				{

@@ -7,7 +7,7 @@
 
 std::map<std::string, int> BuilInLabels
 {
-    {"display", 0x0000},
+    {"display", 0x0011},
 };
 
 COMMAND_PROTOTYPE Prototypes[]
