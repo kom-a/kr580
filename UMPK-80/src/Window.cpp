@@ -67,6 +67,10 @@ void Window::InitImGui()
 	//io.ConfigViewportsNoAutoMerge = true;
 	//io.ConfigViewportsNoTaskBarIcon = true;
 
+	ImGuiStyle& style = ImGui::GetStyle();
+	style.WindowRounding = 0.0f;
+	style.Colors[ImGuiCol_WindowBg].w = 1.0f;
+
 	// Setup Dear ImGui style
 	ImGui::StyleColorsClassic();
 

@@ -55,6 +55,7 @@ int main()
 	window->Add(new RegistersView());
 	window->Add(new InPortView());
 	window->Add(new OutPortView());
+	window->Add(new StandToolsView());
 
 	while (!window->Closed())
 	{

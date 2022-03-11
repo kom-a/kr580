@@ -5,3 +5,4 @@
 #include "views/Toolbar.h"
 #include "views/InPortView.h"
 #include "views/OutPortView.h"
+#include "views/StandToolsView.h"
