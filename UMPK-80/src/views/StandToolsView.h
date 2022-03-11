@@ -15,6 +15,8 @@ public:
 private:
 	void PortToBits(uint8_t value, int bits[8]);
 	void BitsToPort(uint8_t& value, int bits[8]);
+	void DrawDisplay();
+	void DrawCell(float x, float y, float width, float height, uint8_t bitmap);
 
 private:
 	int m_InPort5[8]; // In port 5 bits
