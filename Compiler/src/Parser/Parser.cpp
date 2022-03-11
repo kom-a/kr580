@@ -196,6 +196,10 @@ int getLabelAddr(std::string label, std::map<std::string, int>& labels)
 	{
 		return labels[label];
 	}
+	else if(BuilInLabels.find(label) != BuilInLabels.end())
+	{
+		return BuilInLabels[label];
+	}
 	else 
 		return -1;
 }

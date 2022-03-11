@@ -4,6 +4,12 @@
 #include <map>
 #define COMMAND std::map<std::string, int8_t>
 #define COMMAND_PROTOTYPE std::tuple<std::string, std::string, std::string>
+
+std::map<std::string, int> BuilInLabels
+{
+    {"display", 0x0000},
+};
+
 COMMAND_PROTOTYPE Prototypes[]
 {
     {"add" , "reg", ""},
