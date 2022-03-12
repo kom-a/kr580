@@ -73,15 +73,13 @@ DWORD KR580VM80A::FetchAddress()
 
 void KR580VM80A::Add(WORD& reg, WORD value)
 {
-	if (reg > (WORD)0xFF - value)
-		Flag.CY = 1;
+	Flag.CY = reg > (WORD)0xFF - value ? 1 : 0;
 	reg += value;
 }
 
 void KR580VM80A::Sub(WORD& reg, WORD value)
 {
-	if (reg < value)
-		Flag.CY = 1;
+	Flag.CY = reg < value ? 1 : 0;
 	reg -= value;
 }
 
