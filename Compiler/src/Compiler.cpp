@@ -1,10 +1,10 @@
 #include "Compiler.h"
 #include "Parser/Parser.h"
-#include<iostream>
-#include<map>
+#include <iostream>
+#include <map>
 using namespace std;
 
-std::vector<std::string> stringToTokenVector(std::string source)
+std::vector<std::string> stringToTokenVector(const std::string source)
 {
 	std::vector<std::string> res;
 	int i = 0;
@@ -25,49 +25,61 @@ std::vector<std::string> stringToTokenVector(std::string source)
 	}
 	return res;
 }
-
-void toLower(std::string& source)
+void toUpper(std::string& source)
 {
 	for (int i = 0; i < source.size(); i++)
 	{
-		source[i] = tolower(source[i]);
+		source[i] = toupper(source[i]);
 	}
 }
-void Compiler::Compile(std::string source, int offset)
+void Compiler::Compile(std::string source, const int offset)
 {
 	std::vector<uint8_t> tmp;
+	// NAME; CALLED FROM; REFS TO
 	std::map<std::string, int> labels;
+	std::vector<std::tuple<std::string, int>> unrefLabels;
 	//reset errors
 	compileErrors.ClearMessages();
 	errorOccured = false;
 
 
-	toLower(source);
+	toUpper(source);
 	auto tokens = stringToTokenVector(source + '\n');
-	std::vector<uint8_t> bytes;
 	for (int i = 0; i < tokens.size(); i++)
 	{
 		try
 		{
-			bytes = Parse(tokens[i], labels, tmp.size(), offset);
+			Parse(tokens[i], tmp, labels, unrefLabels, offset);
 		}
 		catch (std::string ex)
 		{
 			errorOccured = true;
 			compileErrors.WriteError(i + 1, ex);
 		}
+	}
 
-		for (auto byte : bytes)
+	if (unrefLabels.size() != 0)
+	{
+		try
 		{
-			tmp.push_back(byte);
+			for (auto label : unrefLabels)
+			{
+				UnknownLabelLeft(std::get<0>(label));
+			}
+		}
+		catch (const std::string ex)
+		{
+			errorOccured = true;
+			compileErrors.WriteError(-99, ex);
 		}
 	}
-	if (!errorOccured)
+	else if(!errorOccured)
+	{
 		resultBinary = tmp;
+	}
 }
-
-void CompileError::WriteError(int line, std::string message)
+void CompileError::WriteError(const int line, const std::string msg)
 {
-	std::tuple<int, std::string> err{line, message};
+	std::tuple<int, std::string> err{line, msg};
 	messages.push_back(err);
 }

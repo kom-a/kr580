@@ -1,18 +1,9 @@
 #include "Parser.h"
 #include "Register/Register.h"
 #include "Command/Command.h"
-#include "ErrorHandler/ErrorHandler.h"
+#include "ErrorHandler/CompilerErrorHandler.h"
 #include <iostream>
-#include <sstream>
 
-std::string quote(std::string str)
-{
-	return "\'" + str + "\'";
-}
-std::string quote(char c)
-{
-	return (std::string) "\'" + c + "\'";
-}
 bool isHexLetterOrNumber(char c)
 {
 	if (c == 'a' || c == 'b' || c == 'c' || c == 'd' || c == 'e' || c == 'f' || isdigit(c))
@@ -22,7 +13,7 @@ bool isHexLetterOrNumber(char c)
 	return false;
 }
 
-bool isRegister(std::string source)
+bool isRegister(const std::string& source)
 {
 	for (std::string reg : Register)
 	{
@@ -32,7 +23,7 @@ bool isRegister(std::string source)
 	return false;
 }
 
-bool isData8(std::string source)
+bool isData8(const std::string& source)
 {
 	if (source.size() != 2)
 		return false;
@@ -49,7 +40,7 @@ bool isData8(std::string source)
 	return true;
 }
 
-bool isData16(std::string source)
+bool isData16(const std::string& source)
 {
 	if (source.size() != 4)
 		return false;
@@ -66,7 +57,7 @@ bool isData16(std::string source)
 	return true;
 }
 
-bool isLabel(std::string source)
+bool isLabel(const std::string& source)
 {
 	int i = 0;
 	char c = source[i];
@@ -101,7 +92,7 @@ void parseLabel(std::string source)
 			{
 				if(c == ':' && i != source.size() - 1)
 				{
-					RaiseError(ErrorType::INVALID_LABEL, "unexpected char " + quote(source[i + 1]) + " after label");
+					RaiseError(CompilerError::INVALID_LABEL, "unexpected char " + quote(source[i + 1]) + " after label");
 				}
 			}
 			i++;
@@ -110,7 +101,7 @@ void parseLabel(std::string source)
 	}
 	else
 	{
-		RaiseError(ErrorType::INVALID_LABEL, "label cannot start with " + quote(c));
+		RaiseError(CompilerError::INVALID_LABEL, "label cannot start with " + quote(c));
 	}
 }
 
@@ -153,7 +144,7 @@ std::vector<std::string> split(std::string s, char del = ' ')
 	return res;
 }
 
-std::vector<std::string> tokenizeCommand(std::string source)
+std::vector<std::string> tokenizeCommand(const std::string& source)
 {
 	/*
 	*	No spaces in string means the string is 0 args command or it's an error, and we just return the token assuming that it's a command
@@ -230,10 +221,39 @@ void normalize(std::string& source)
 	deleteMultipleSpaces(source);
 }
 
-std::vector<uint8_t> Parse(std::string source, std::map<std::string, int>& labels, int currentBytesCount, int offset)
+bool isUnrefLabel(std::string label, std::vector<std::tuple<std::string, int>>& unrefLabels)
+{
+	for (auto ln : unrefLabels)
+	{
+		if (std::get<0>(ln) == label)
+		{
+			return true;
+		}
+	}
+	return false;
+}
+
+void insertUnrefLabelAddresses(std::string label, int16_t address, std::vector<uint8_t>& arr, std::map<std::string, int>& labels, std::vector<std::tuple<std::string, int>>& unrefLabels, int offset)
+{
+	for(int i = 0; i < unrefLabels.size(); i++)
+	{
+		if (std::get<0>(unrefLabels[i]) == label)
+		{
+			arr[std::get<1>(unrefLabels[i]) + 1] = ((address + offset) & 0x000000ff);
+			arr[std::get<1>(unrefLabels[i])] = ((address + offset) & 0x0000ff00) >> 8;
+			unrefLabels.erase(unrefLabels.begin() + i);
+			i--;
+		}
+	}
+}
+
+void UnknownLabelLeft(std::string label)
+{
+	RaiseError(CompilerError::UNDEFINED_LABEL, "unknown label" + quote(label));
+}
+void Parse(std::string source, std::vector<uint8_t>& byteArray, std::map<std::string, int>& labels, std::vector<std::tuple<std::string, int>>& unrefLabels, const int& offset)
 {
 	std::string errMessage = "";
-	std::vector<uint8_t> res;
 	normalize(source);
 	if (notJustSpaces(source))
 	{
@@ -241,7 +261,7 @@ std::vector<uint8_t> Parse(std::string source, std::map<std::string, int>& label
 		int size = tokens.size();
 		if (size > 3)				//error
 		{
-			RaiseError(ErrorType::INVALID_ARGUMENT_NUM, "more than 2 args gived");
+			RaiseError(CompilerError::INVALID_ARGUMENT_NUM, "more than 2 args gived");
 		}
 		else if (size == 3)  //2 args command
 		{
@@ -256,7 +276,7 @@ std::vector<uint8_t> Parse(std::string source, std::map<std::string, int>& label
 			else if (isData16(tokens[1]))
 				argType1 = "d16";
 			else
-				RaiseError(ErrorType::INVALID_ARGUMENT, std::string("unknown argument type of ") + quote(tokens[1]));
+				RaiseError(CompilerError::INVALID_ARGUMENT, std::string("unknown argument type of ") + quote(tokens[1]));
 
 			if (isRegister(tokens[2]))
 				argType2 = "reg";
@@ -265,11 +285,11 @@ std::vector<uint8_t> Parse(std::string source, std::map<std::string, int>& label
 			else if (isData16(tokens[2]))
 				argType2 = "d16";
 			else
-				RaiseError(ErrorType::INVALID_ARGUMENT, std::string("unknown argument type of ") + quote(tokens[2]));
+				RaiseError(CompilerError::INVALID_ARGUMENT, std::string("unknown argument type of ") + quote(tokens[2]));
 
-			if (!protorypeExists(tokens[0], argType1, argType2))
+			if (!prototypeExists(tokens[0], argType1, argType2))
 			{
-				RaiseError(ErrorType::UNKNOWN_COMMAND, "unknown command prototype " + quote(tokens[0] + " " + argType1 + " " + argType2));
+				RaiseError(CompilerError::UNKNOWN_COMMAND, "unknown command prototype " + quote(tokens[0] + " " + argType1 + " " + argType2));
 			}
 			else
 			{
@@ -282,23 +302,23 @@ std::vector<uint8_t> Parse(std::string source, std::map<std::string, int>& label
 				//PUSH BYTES
 				int8_t code = getCommandOpcode(tokens[0] + "_" + argType1 + "_" + argType2);
 				if (code == -1)
-					RaiseError(ErrorType::UNKNOWN_COMMAND, "unknown command prototype " + quote(tokens[0] + " " + argType1 + " " + argType2));
-				res.push_back(code);
+					RaiseError(CompilerError::UNKNOWN_COMMAND, "unknown command prototype " + quote(tokens[0] + " " + argType1 + " " + argType2));
+				byteArray.push_back(code);
 				
 				if(argType1 == "d8")
-					res.push_back((uint8_t)strtol(tokens[1].c_str(), nullptr, 16));
+					byteArray.push_back((uint8_t)strtol(tokens[1].c_str(), nullptr, 16));
 				else if (argType1 == "d16")
 				{
-					res.push_back((uint8_t)strtol(tokens[1].substr(2).c_str(), nullptr, 16));
-					res.push_back((uint8_t)strtol(tokens[1].substr(0, 2).c_str(), nullptr, 16));
+					byteArray.push_back((uint8_t)strtol(tokens[1].substr(2).c_str(), nullptr, 16));
+					byteArray.push_back((uint8_t)strtol(tokens[1].substr(0, 2).c_str(), nullptr, 16));
 				}
 
 				if (argType2 == "d8")
-					res.push_back((uint8_t)strtol(tokens[2].c_str(), nullptr, 16));
+					byteArray.push_back((uint8_t)strtol(tokens[2].c_str(), nullptr, 16));
 				else if (argType2 == "d16")
 				{
-					res.push_back((uint8_t)strtol(tokens[2].substr(2).c_str(), nullptr, 16));
-					res.push_back((uint8_t)strtol(tokens[2].substr(0, 2).c_str(), nullptr, 16));
+					byteArray.push_back((uint8_t)strtol(tokens[2].substr(2).c_str(), nullptr, 16));
+					byteArray.push_back((uint8_t)strtol(tokens[2].substr(0, 2).c_str(), nullptr, 16));
 				}
 
 			}
@@ -315,11 +335,11 @@ std::vector<uint8_t> Parse(std::string source, std::map<std::string, int>& label
 			else if (isLabel(tokens[1]))
 				argType = "label";
 			else
-				RaiseError(ErrorType::INVALID_ARGUMENT, std::string("unknown argument type of ") + quote(tokens[1]));
+				RaiseError(CompilerError::INVALID_ARGUMENT, std::string("unknown argument type of ") + quote(tokens[1]));
 
-			if (!protorypeExists(tokens[0], argType, ""))
+			if (!prototypeExists(tokens[0], argType, ""))
 			{
-				RaiseError(ErrorType::UNKNOWN_COMMAND, "unknown command prototype " + quote(tokens[0] + " " + argType));
+				RaiseError(CompilerError::UNKNOWN_COMMAND, "unknown command prototype " + quote(tokens[0] + " " + argType));
 			}
 			else
 			{
@@ -328,79 +348,92 @@ std::vector<uint8_t> Parse(std::string source, std::map<std::string, int>& label
 					argType = tokens[1];
 					int8_t code = getCommandOpcode(tokens[0] + "_" + argType);
 					if (code == -1)
-						RaiseError(ErrorType::UNKNOWN_COMMAND, "unknown command prototype " + quote(tokens[0] + " " + argType));
-					res.push_back(code);
+						RaiseError(CompilerError::UNKNOWN_COMMAND, "unknown command prototype " + quote(tokens[0] + " " + argType));
+					byteArray.push_back(code);
 
 				}				
 				else
 				{
 					int8_t code = getCommandOpcode(tokens[0] + "_" + (argType == "label"? "d16":argType));
 					if (code == -1)
-						RaiseError(ErrorType::UNKNOWN_COMMAND, "unknown command prototype " + quote(tokens[0] + " " + argType));
-					res.push_back(code);
+						RaiseError(CompilerError::UNKNOWN_COMMAND, "unknown command prototype " + quote(tokens[0] + " " + argType));
+					byteArray.push_back(code);
 				}
 
 				if (argType == "d8")
-					res.push_back((uint8_t)strtol(tokens[1].c_str(), nullptr, 16));
+					byteArray.push_back((uint8_t)strtol(tokens[1].c_str(), nullptr, 16));
 				else if (argType == "d16")
 				{
-					res.push_back((uint8_t)strtol(tokens[1].substr(2).c_str(), nullptr, 16));
-					res.push_back((uint8_t)strtol(tokens[1].substr(0, 2).c_str(), nullptr, 16));
+					byteArray.push_back((uint8_t)strtol(tokens[1].substr(2).c_str(), nullptr, 16));
+					byteArray.push_back((uint8_t)strtol(tokens[1].substr(0, 2).c_str(), nullptr, 16));
 				}
 				else if (argType == "label")
 				{
 					if (labels.find(tokens[1]) != labels.end())
 					{
-
 						int resAddr = labels[tokens[1]] + offset;
-						res.push_back(resAddr & 0x000000ff);
-						res.push_back((resAddr & 0x0000ff00) >> 8);
+						byteArray.push_back(resAddr & 0x000000ff);
+						byteArray.push_back((resAddr & 0x0000ff00) >> 8);
 					}
 					else if (BuilInLabels.find(tokens[1]) != BuilInLabels.end())
 					{
-						int resAddr = BuilInLabels[tokens[1]];
-						res.push_back(resAddr & 0x000000ff);
-						res.push_back((resAddr & 0x0000ff00) >> 8);
+						int resAddr = BuilInLabels.at(tokens[1]);
+						byteArray.push_back(resAddr & 0x000000ff);
+						byteArray.push_back((resAddr & 0x0000ff00) >> 8);
 					}
 					else
 					{
-						RaiseError(ErrorType::UNDEFINED_LABEL, "unknown label " + quote(tokens[1]));
+						unrefLabels.push_back({ std::string(tokens[1]), byteArray.size()});
+						byteArray.push_back(0x0000 & 0x000000ff);
+						byteArray.push_back((0x0000 & 0x0000ff00) >> 8);
+						//RaiseError(CompilerError::UNDEFINED_LABEL, "unknown label " + quote(tokens[1]));
 					}
 				}
 				else if (isRegister(argType));
 				else
 				{
-					RaiseError(ErrorType::INVALID_ARGUMENT, "invalid argument " + quote(tokens[1]));
+					RaiseError(CompilerError::INVALID_ARGUMENT, "invalid argument " + quote(tokens[1]));
 				}
 					
 			}
 		}
 		else if (size == 1)		// 0 args command
 		{
-			if (!protorypeExists(tokens[0], "", ""))
+			if (!prototypeExists(tokens[0], "", ""))
 			{
 				if (tokens[0].find(':') != -1)
 				{
 					parseLabel(tokens[0]);
-					labels.insert({tokens[0].substr(0, tokens[0].size() - 1), currentBytesCount});
+					std::string labelName = tokens[0].substr(0, tokens[0].size() - 1);
+					if (labels.find(labelName) == labels.end())
+					{
+						labels.insert({ labelName, byteArray.size()});
+						if (isUnrefLabel(labelName, unrefLabels))
+						{
+							insertUnrefLabelAddresses(labelName, byteArray.size(), byteArray, labels, unrefLabels, offset);
+						}
+					}
+					else
+					{
+						RaiseError(CompilerError::ALREADY_DEFINED_LABEL, "label " + quote(tokens[0]) + "is already defined");
+					}
 				}
 				else
 				{
-					RaiseError(ErrorType::UNKNOWN_COMMAND, "unknown command " + quote(tokens[0]));
+					RaiseError(CompilerError::UNKNOWN_COMMAND, "unknown command " + quote(tokens[0]));
 				}
 			}
 			else
 			{
 				int8_t code = getCommandOpcode(tokens[0]);
 				if (code == -1)
-					RaiseError(ErrorType::UNKNOWN_COMMAND, "unknown command " + quote(tokens[0]));
-				res.push_back(code);
+					RaiseError(CompilerError::UNKNOWN_COMMAND, "unknown command " + quote(tokens[0]));
+				byteArray.push_back(code);
 			}
 		}
 		else
 		{
-			RaiseError(ErrorType::UNEXPECTED_ERROR, "unknown error");
+			RaiseError(CompilerError::UNEXPECTED_ERROR, "unknown error");
 		}
 	}
-	return res;
 }
