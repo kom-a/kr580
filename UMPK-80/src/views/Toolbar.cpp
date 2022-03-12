@@ -33,6 +33,11 @@ void Toolbar::Render(KR580VM80A* emu)
 		emu->Running = true;
 	}
 	ImGui::SameLine();
+	if (ImGui::Button("Stop"))
+	{
+		emu->Running = false;
+	}
+	ImGui::SameLine();
 	if (ImGui::Button("Reset"))
 	{
 		emu->PC = USER_MEMORY_OFFSET;

@@ -19,6 +19,20 @@ private:
 	void DrawCell(float x, float y, float width, float height, uint8_t bitmap);
 
 private:
+	struct DisplayStyle
+	{
+		float Spacing = 20.0f;
+		float Width = 36.0f;
+		float Height = Width * 2;
+		int ColorEnabled = IM_COL32(200, 50, 50, 255);
+		int ColorDisabled = IM_COL32(20, 5, 5, 255);
+		float Rounding = Width;
+		float Thickness = 5.0f;
+		float Offset = 0.5f;
+	};
+
 	int m_InPort5[8]; // In port 5 bits
 	int m_OutPort5[8]; // Out port 5 bits
+	uint8_t m_Display[6]; // Display bitmaps
+	DisplayStyle m_DisplayStyle;
 };

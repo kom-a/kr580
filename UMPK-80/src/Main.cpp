@@ -23,22 +23,7 @@ int main()
 
 	std::vector<WORD> program = {
 		IN_pp, 0x05,
-		MOV_B_A,
-		ANI_d8, 0x82,
-		JNZ_a16, 0x1A, 0x08,
-		MOV_A_B, 
-		ANI_d8, 0x20,
-		JZ_a16, 0x1A, 0x08,
-		MOV_A_B,
-		ANI_d8, 0xBF,
-		ORI_d8, 0x10,
-		XRI_d8, 0x04,
-		OUT_pp, 0x05,
-		JMP_a16, 0x00, 0x08,
-		MOV_A_B,
-		ANI_d8, 0xFE,
-		ORI_d8, 0x08,
-		XRI_d8, 0x02,
+		CMA,
 		OUT_pp, 0x05,
 		JMP_a16, 0x00, 0x08
 	};
