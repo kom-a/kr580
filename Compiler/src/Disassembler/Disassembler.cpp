@@ -107,45 +107,54 @@ std::vector<std::string> Disassembler::GetMnemonics(const std::vector<uint8_t>& 
 
 			//Get command bytes 
 			int j = arg.Length - 1;
-			while (j != 0 && i + 1 < byteArr.size())
+			int k = i + j;
+			for (k; k > i; k--)
 			{
-				i++;
-				std::string byte = toHexString(byteArr[i]);
+				std::string byte = toHexString(byteArr[k]);
 				strToUpper(byte);
+
 				if (argType == "d8")
 					line += " " + byte;
 				else
 					line += byte;
-				j--;
 			}
-			if (j != 0)  //not enough bytes
+
+			if (k != i)  //not enough bytes
 			{
 				errAddr = offset + i;
-				RaiseError(DisassemblerError::INVALID_ARG_NUM, "command " + quote(command) + std::string(" expected length is ") + std::to_string(arg.Length) + " bytes but got " + std::to_string(arg.Length - j));
+				RaiseError(DisassemblerError::INVALID_ARG_NUM, "command " + quote(command) + std::string(" expected length is ") + std::to_string(arg.Length - 1) + " bytes but got " + std::to_string(arg.Length - j));
 			}
 			else
 			{
-				if (argType == "a16" || argType == "d16")
+				i += j;
+				int ind = commnadPrototype.find(' ');
+				if (ind != -1)
 				{
-					int16_t addr = ((uint16_t)byteArr[i]) << 8;
-					addr = addr + (uint16_t)byteArr[i - 1];
-					std::string builtInLabel = getBuiltInLabel(addr);
+					commnadPrototype[ind] = '_';
+					if (isLabelArgCommand(commnadPrototype))
+					{
+						int16_t addr = ((uint16_t)byteArr[i]) << 8;
+						addr = addr + (uint16_t)byteArr[i - 1];
+						std::string builtInLabel = getBuiltInLabel(addr);
 
-					if (builtInLabel != "")
-					{
-						line.replace(line.size() - 4, line.size(), builtInLabel);
-					}
-					else
-					{
-						if (!referenceExists(addr, references))
+						if (builtInLabel != "")
 						{
-							references.insert({ addr, std::string("Label") + std::to_string(references.size()) + ":" });
+							line.replace(line.size() - 4, line.size(), builtInLabel);
 						}
-						line.replace(line.size() - 4, line.size(), ("Label" + std::to_string(references.size() - 1)).c_str());
+						else
+						{
+							if (!referenceExists(addr, references))
+							{
+								references.insert({ addr, std::string("Label") + std::to_string(references.size()) + ":" });
+							}
+							line.replace(line.size() - 4, line.size(), ("Label" + std::to_string(references.size() - 1)).c_str());
+						}
 					}
 				}
+				
+				if(arg.Length - 1 != 0)
+					res.push_back(line + '\n');
 			}
-			res.push_back(line + '\n');
 		}
 		else
 		{

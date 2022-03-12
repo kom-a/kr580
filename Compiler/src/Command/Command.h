@@ -351,6 +351,42 @@ const COMMAND ISA =
     {"XRI_d8", 0xEE},
 };
 
+
+
+const COMMAND LabelArgCommands =
+{
+    {"CALL_a16", 0xCD},
+    {"CZ_a16", 0xCC},
+    {"ÑNZ_a16", 0xC4},
+    {"ÑP_a16", 0xF4},
+    {"ÑM_a16", 0xFC},
+    {"CC_a16", 0xDC},
+    {"CNC_a16", 0xD4},
+    {"CPE_a16", 0xEC},
+    {"CPO_a16", 0xE4},
+    {"JMP_a16", 0xC3},
+    {"JZ_a16", 0xCA},
+    {"JNZ_a16", 0xC2},
+    {"JP_a16", 0xF2},
+    {"JM_a16", 0xFA},
+    {"JC_a16", 0xDA},
+    {"JNC_a16", 0xD2},
+    {"JPE_a16", 0xEA},
+    {"JPO_a16", 0xE2},
+};
+
+static bool isLabelArgCommand(const std::string& command)
+{
+    if (LabelArgCommands.find(command) != LabelArgCommands.end())
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+}
+
 static int8_t getCommandOpcode(const std::string& command)
 {
     if (ISA.find(command) != ISA.end())
