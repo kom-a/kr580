@@ -49,9 +49,18 @@ std::string getBuiltInLabel(uint16_t addr)
 	return "";
 }
 
+bool referenceExists(int addr, std::map<uint16_t, std::string>& references)
+{
+	for (auto ref : references)
+	{
+		if(std::get<0>(ref) == addr)
+			return true;
+	}
+	return false;
+}
 
 
-std::vector<std::string> Disassembler::GetMnemonics(const std::vector<uint8_t>& byteArr, std::map<std::string, uint16_t>& references, int& errAddr, const int& offset)
+std::vector<std::string> Disassembler::GetMnemonics(const std::vector<uint8_t>& byteArr, std::map<uint16_t, std::string>& references, int& errAddr, const int& offset)
 {
 	std::vector<std::string> res;
 	for (int i = 0; i < byteArr.size(); i++)
@@ -116,7 +125,7 @@ std::vector<std::string> Disassembler::GetMnemonics(const std::vector<uint8_t>& 
 			}
 			else
 			{
-				if (argType == "a16")
+				if (argType == "a16" || argType == "d16")
 				{
 					int16_t addr = ((uint16_t)byteArr[i]) << 8;
 					addr = addr + (uint16_t)byteArr[i - 1];
@@ -128,7 +137,10 @@ std::vector<std::string> Disassembler::GetMnemonics(const std::vector<uint8_t>& 
 					}
 					else
 					{
-						references.insert({ std::string("Label") + std::to_string(references.size()) + ":",  addr});
+						if (!referenceExists(addr, references))
+						{
+							references.insert({ addr, std::string("Label") + std::to_string(references.size()) + ":" });
+						}
 						line.replace(line.size() - 4, line.size(), ("Label" + std::to_string(references.size() - 1)).c_str());
 					}
 				}
@@ -161,7 +173,7 @@ void Disassembler::Disassemble(const std::vector<uint8_t>& byteArr, const int of
 {
 	std::vector<std::string> res;
 	int errAddr;
-	std::map<std::string, uint16_t> references;
+	std::map<uint16_t, std::string> references;
 	errorOccured = false;
 	try
 	{
@@ -169,10 +181,10 @@ void Disassembler::Disassemble(const std::vector<uint8_t>& byteArr, const int of
 		int proceed = 0;
 		for (auto ref : references)
 		{
-			int ind = uint16_t (ref.second - ((uint16_t)offset));
+			int ind = uint16_t (ref.first - ((uint16_t)offset));
 			int labelIndex = getLabelIndex(byteArr, ind) + proceed;
 			proceed++;
-			res.insert(res.begin() + labelIndex, ref.first);
+			res.insert(res.begin() + labelIndex, ref.second);
 		}
 	}
 	catch (const std::string ex)

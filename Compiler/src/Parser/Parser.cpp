@@ -6,7 +6,7 @@
 
 bool isHexLetterOrNumber(char c)
 {
-	if (c == 'a' || c == 'b' || c == 'c' || c == 'd' || c == 'e' || c == 'f' || isdigit(c))
+	if (c == 'A' || c == 'B' || c == 'C' || c == 'D' || c == 'E' || c == 'F' || isdigit(c))
 	{
 		return true;
 	}
@@ -239,8 +239,8 @@ void insertUnrefLabelAddresses(std::string label, int16_t address, std::vector<u
 	{
 		if (std::get<0>(unrefLabels[i]) == label)
 		{
-			arr[std::get<1>(unrefLabels[i]) + 1] = ((address + offset) & 0x000000ff);
-			arr[std::get<1>(unrefLabels[i])] = ((address + offset) & 0x0000ff00) >> 8;
+			arr[std::get<1>(unrefLabels[i])] = ((address + offset) & 0x000000ff);
+			arr[std::get<1>(unrefLabels[i]) + 1] = ((address + offset) & 0x0000ff00) >> 8;
 			unrefLabels.erase(unrefLabels.begin() + i);
 			i--;
 		}

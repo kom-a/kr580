@@ -17,7 +17,7 @@ public:
 class Disassembler
 {
 private:
-	std::vector<std::string> GetMnemonics(const std::vector<uint8_t>& byteArr, std::map<std::string, uint16_t>& references, int& errAddr, const int& offset);
+	std::vector<std::string> GetMnemonics(const std::vector<uint8_t>& byteArr, std::map<uint16_t, std::string>& references, int& errAddr, const int& offset);
 public:
 	bool errorOccured = false;
 	DisassembleErrors disassembleError;
