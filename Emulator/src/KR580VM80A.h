@@ -32,6 +32,8 @@ private:
 	DWORD FetchAddress();
 	void Add(WORD& reg, WORD value);
 	void Sub(WORD& reg, WORD value);
+	void Adc(WORD& reg, WORD value);
+	void Sbb(WORD& reg, WORD value);
 	void Push(DWORD value);
 	DWORD Pop();
 

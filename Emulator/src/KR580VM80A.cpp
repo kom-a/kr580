@@ -83,6 +83,22 @@ void KR580VM80A::Sub(WORD& reg, WORD value)
 	reg -= value;
 }
 
+void KR580VM80A::Adc(WORD& reg, WORD value)
+{
+	Add(reg, value);
+	bool carry = Flag.CY;
+	Add(A, Flag.CY);
+	Flag.CY = carry ? carry : Flag.CY;
+}
+
+void KR580VM80A::Sbb(WORD& reg, WORD value)
+{
+	Sub(reg, value);
+	bool carry = Flag.CY;
+	Sub(A, Flag.CY);
+	Flag.CY = carry ? carry : Flag.CY;
+}
+
 void KR580VM80A::Push(DWORD value)
 {
 	WORD high = (value >> 8) & 0xFF;
@@ -157,58 +173,48 @@ void KR580VM80A::Step()
 	} break;
 	case ADC_A:
 	{
-		Add(A, A);
-		Add(A, Flag.CY);
+		Adc(A, A);
 		UpdateZSP(A);
 	} break;
 	case ADC_B:
 	{
-		Add(A, B);
-		Add(A, Flag.CY);
+		Adc(A, B);
 		UpdateZSP(A);
 	} break;
 	case ADC_C:
 	{
-		Add(A, C);
-		Add(A, Flag.CY);
+		Adc(A, C);
 		UpdateZSP(A);
 	} break;
 	case ADC_D:
 	{
-		Add(A, D);
-		Add(A, Flag.CY);
+		Adc(A, D);
 		UpdateZSP(A);
 	} break;
 	case ADC_E:
 	{
-		Add(A, E);
-		Add(A, Flag.CY);
+		Adc(A, E);
 		UpdateZSP(A);
 	} break;
 	case ADC_H:
 	{
-		Add(A, H);
-		Add(A, Flag.CY);
+		Adc(A, H);
 		UpdateZSP(A);
 	} break;
 	case ADC_L:
 	{
-		Add(A, L);
-		Add(A, Flag.CY);
+		Adc(A, L);
 		UpdateZSP(A);
 	} break;
 	case ADC_M:
 	{
-		WORD data = Memory[HL];
-		Add(A, data);
-		Add(A, Flag.CY);
+		Adc(A, Memory[HL]);
 		UpdateZSP(A);
 	} break;
 	case ACI_d8:
 	{
 		WORD d8 = Fetch();
-		Add(A, d8);
-		Add(A, Flag.CY);
+		Adc(A, d8);
 		UpdateZSP(A);
 	} break;
 	case ANA_A:
@@ -1315,57 +1321,48 @@ void KR580VM80A::Step()
 	} break;
 	case SBB_A:
 	{
-		Sub(A, A);
-		Sub(A, Flag.CY);
+		Sbb(A, A);
 		UpdateZSP(A);
 	} break;
 	case SBB_B:
 	{
-		Sub(A, B);
-		Sub(A, Flag.CY);
+		Sbb(A, B);
 		UpdateZSP(A);
 	} break;
 	case SBB_C:
 	{
-		Sub(A, C);
-		Sub(A, Flag.CY);
+		Sbb(A, C);
 		UpdateZSP(A);
 	} break;
 	case SBB_D:
 	{
-		Sub(A, D);
-		Sub(A, Flag.CY);
+		Sbb(A, D);
 		UpdateZSP(A);
 	} break;
 	case SBB_E:
 	{
-		Sub(A, E);
-		Sub(A, Flag.CY);
+		Sbb(A, E);
 		UpdateZSP(A);
 	} break;
 	case SBB_H:
 	{
-		Sub(A, H);
-		Sub(A, Flag.CY);
+		Sbb(A, H);
 		UpdateZSP(A);
 	} break;
 	case SBB_L:
 	{
-		Sub(A, L);
-		Sub(A, Flag.CY);
+		Sbb(A, L);
 		UpdateZSP(A);
 	} break;
 	case SBB_M:
 	{
-		Sub(A, Memory[HL]);
-		Sub(A, Flag.CY);
+		Sbb(A, Memory[HL]);
 		UpdateZSP(A);
 	} break;
 	case SBI_d8:
 	{
 		WORD d8 = Fetch();
-		Sub(A, d8);
-		Sub(A, Flag.CY);
+		Sbb(A, d8);
 		UpdateZSP(A);
 	} break;
 	case XCHG:
