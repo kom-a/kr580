@@ -105,6 +105,11 @@ std::vector<std::string> Disassembler::GetMnemonics(const std::vector<uint8_t>& 
 				line += command;
 			}
 
+			if (argType.empty())
+			{
+				command = commnadPrototype;
+				line += command;
+			}
 			//Get command bytes 
 			int j = arg.Length - 1;
 			int k = i + j;
@@ -152,7 +157,7 @@ std::vector<std::string> Disassembler::GetMnemonics(const std::vector<uint8_t>& 
 					}
 				}
 				
-				if(arg.Length - 1 != 0)
+				if(arg.Length != 0)
 					res.push_back(line + '\n');
 			}
 		}
