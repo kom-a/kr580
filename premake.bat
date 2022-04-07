@@ -6,7 +6,7 @@ if "%1" == "" goto default
 goto exit
 
 :default
-    "Utils/Premake/premake5.exe" vs2019
+    "Utils/Premake/premake5.exe" vs2022
     goto exit
 
 :exit
