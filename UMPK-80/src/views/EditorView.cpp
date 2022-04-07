@@ -1,93 +1,8 @@
 #include "EditorView.h"
 
-static const char* testProgram = "LXI H, 0800\n"
-"MVI B, 55\n"
-"LOOP:\n"
-"MOV A, B\n"
-"MOV M, A\n"
-"HELLO\n"
-"RLC\n"
-"INX H\n"
-"MOV B, A\n"
-"MVI A, 0A\n"
-"CMP H\n"
-"JNZ LOOP\n"
-"MVI A, 70\n"
-"CMP L\n"
-"JNZ LOOP\n"
-"RST1\n"
-"\n"
-"NOP\n"
-"NOP\n"
-"NOP\n"
-"NOP\n"
-"NOP\n"
-"NOP\n"
-"NOP\n"
-"NOP\n"
-"NOP\n"
-"\n"
-"LXI H, 0800\n"
-"MVI B, 55\n"
-"LOOP2:\n"
-"MOV A, B\n"
-"CMP M\n"
-"JNZ FAIL\n"
-"INX H\n"
-"RLC\n"
-"MOV B, A\n"
-"MVI A, 0A\n"
-"CMP H\n"
-"JNZ LOOP2\n"
-"MVI A, 70\n"
-"CMP L\n"
-"JNZ LOOP2\n"
-"JMP SUCCESS\n"
-"\n"
-"SUCCESS:\n"
-"CALL 05BA\n"
-"JMP EXIT\n"
-"\n"
-"\n"
-"FAIL:\n"
-"PUSH H\n"
-"CALL 01E9\n"
-"CALL 01C8\n"
-"CALL PRINT\n"
-"POP H\n"
-"JMP FAIL\n"
-"\n"
-"PRINT:\n"
-"XCHG                   ; (DE) <--> (HL)\n"
-"LXI H, 0BF0       ; (HL) <-- 0BF0\n"
-"LDAX D               ; (A) <-- ((DE))\n"
-"CALL SPLIT\n"
-"MOV A, E\n"
-"CALL SPLIT\n"
-"MOV A, D\n"
-"CALL SPLIT\n"
-"JMP LOOP\n"
-"\n"
-"SPLIT:\n"
-"MOV B, A\n"
-"ANI 0F                 ; (A)    <-- (A) & 0x0F\n"
-"MOV M, A            ; ((HL)) <-- (A)\n"
-"INX H                   ; (HL)++\n"
-"MOV A, B\n"
-"RRC                      ; (A) <-- (A) >> 1\n"
-"RRC\n"
-"RRC\n"
-"RRC\n"
-"ANI 0F                 ; (A)    <-- (A) & 0x0F\n"
-"MOV M, A            ; ((HL)) <-- (A)\n"
-"INX H\n"
-"RET\n"
-"\n"
-"EXIT:\n"
-"RST1\n";
-
 EditorView::EditorView()
-	: m_Editor()
+	: m_Editor(),
+	m_Compiler()
 {
 	m_Open = true;
 
@@ -123,7 +38,6 @@ EditorView::EditorView()
 	lang.mKeywords.insert("STA");
 	lang.mKeywords.insert("ADD");
 
-
 	const char* const identifiers[] = {
 			"A", "B", "C", "D", "E", "F", "H", "L", "M",
 			"PSW", "BC", "DE", "HL"
@@ -132,7 +46,7 @@ EditorView::EditorView()
 	for (auto& k : identifiers)
 	{
 		TextEditor::Identifier id;
-		id.mDeclaration = "Built-in";
+		id.mDeclaration = "Register";
 		lang.mIdentifiers.insert(std::make_pair(std::string(k), id));
 	}
 
@@ -175,10 +89,35 @@ void EditorView::Render(KR580VM80A* emu)
 	if (!m_Open)
 		return;
 
-	auto cpos = m_Editor.GetCursorPosition();
 	ImGui::Begin("Editor", &m_Open);
 
-	static const char* filename = "Hello world.cpp";
+	if (ImGui::Button("Assemble"))
+	{
+		uint32_t offset = 0x0800;	// Hardcode this for now
+		TextEditor::ErrorMarkers error_markers;
+		auto& source_code = m_Editor.GetText();
+		
+		m_Compiler.Compile(source_code, offset);
+
+		if (!m_Compiler.errorOccured)
+		{
+			std::vector<uint8_t>& program = m_Compiler.resultBinary;
+			emu->LoadProgram(program, offset);
+		}
+		else
+		{
+			for (auto& error : m_Compiler.compileErrors.messages)
+			{
+				auto& line = std::get<0>(error);
+				auto& message = std::get<1>(error);
+
+				auto& pair = std::make_pair<const int, std::string>(std::move(line), std::move(message));
+				error_markers.insert(pair);
+			}
+		}
+
+		m_Editor.SetErrorMarkers(error_markers);
+	}
 
 	m_Editor.Render("Editor");
 

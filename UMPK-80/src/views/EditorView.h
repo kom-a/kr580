@@ -1,6 +1,7 @@
 #pragma once
 
 #include "View.h"
+#include "src/Compiler.h"
 
 #include <imgui/imgui.h>
 #include <ImGuiColorTextEdit/TextEditor.h>
@@ -15,4 +16,5 @@ public:
 
 private:
 	TextEditor m_Editor;
+	Compiler m_Compiler;
 };
