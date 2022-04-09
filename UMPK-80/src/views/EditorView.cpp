@@ -1,8 +1,11 @@
 #include "EditorView.h"
 
+#include <sstream>
+
 EditorView::EditorView()
 	: m_Editor(),
-	m_Compiler()
+	m_Compiler(),
+	m_Disassembler()
 {
 	m_Open = true;
 
@@ -91,9 +94,10 @@ void EditorView::Render(KR580VM80A* emu)
 
 	ImGui::Begin("Editor", &m_Open);
 
+	const uint32_t offset = 0x0800;	// Hardcode this for now
+
 	if (ImGui::Button("Assemble"))
 	{
-		uint32_t offset = 0x0800;	// Hardcode this for now
 		TextEditor::ErrorMarkers error_markers;
 		auto& source_code = m_Editor.GetText();
 		
@@ -117,6 +121,27 @@ void EditorView::Render(KR580VM80A* emu)
 		}
 
 		m_Editor.SetErrorMarkers(error_markers);
+	}
+	ImGui::SameLine();
+	if (ImGui::Button("Disassemble"))
+	{
+		uint8_t* memory_start = &emu->Memory[offset];
+		m_Disassembler.Disassemble(std::vector<uint8_t>(memory_start, memory_start + 0x10), offset);
+		if (!m_Disassembler.errorOccured)
+		{
+			std::stringstream source;
+
+			auto& mnemonics = m_Disassembler.mnemonics;
+			for (auto& m : mnemonics)
+				source << m;
+
+			m_Editor.SetText(source.str());
+		}
+		else
+		{
+			// TODO: Log out this to the user
+			assert(false);
+		}
 	}
 
 	m_Editor.Render("Editor");
