@@ -14,5 +14,9 @@ public:
 	void Render(KR580VM80A* emu);
 
 private:
+	void DrawContent();
+	void CalcSizes();
+
+private:
 	MemoryEditor m_MemoryEditor;
 };

@@ -122,27 +122,6 @@ void EditorView::Render(KR580VM80A* emu)
 
 		m_Editor.SetErrorMarkers(error_markers);
 	}
-	ImGui::SameLine();
-	if (ImGui::Button("Disassemble"))
-	{
-		uint8_t* memory_start = &emu->Memory[offset];
-		m_Disassembler.Disassemble(std::vector<uint8_t>(memory_start, memory_start + 0x10), offset);
-		if (!m_Disassembler.errorOccured)
-		{
-			std::stringstream source;
-
-			auto& mnemonics = m_Disassembler.mnemonics;
-			for (auto& m : mnemonics)
-				source << m;
-
-			m_Editor.SetText(source.str());
-		}
-		else
-		{
-			// TODO: Log out this to the user
-			assert(false);
-		}
-	}
 
 	m_Editor.Render("Editor");
 

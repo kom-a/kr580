@@ -25,7 +25,7 @@ private:
 		float Width = 36.0f;
 		float Height = Width * 2;
 		int ColorEnabled = IM_COL32(200, 50, 50, 255);
-		int ColorDisabled = IM_COL32(20, 5, 5, 255);
+		int ColorDisabled = IM_COL32(50, 20, 20, 255);
 		float Rounding = Width;
 		float Thickness = 5.0f;
 		float Offset = 0.5f;

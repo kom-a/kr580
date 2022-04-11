@@ -2,16 +2,16 @@
 
 #include <iostream>
 
-#include <imgui/imgui.h>
 #include <ImGuiColorTextEdit/TextEditor.h>
 #include <imgui/backends/imgui_impl_glfw.h>
 #include <imgui/backends/imgui_impl_opengl3.h>
 
 Window::Window(int32_t width, int32_t height, const std::string& title)
-	: m_Width(width), 
-	m_Height(height), 
-	m_Title(title), 
-	m_GLFWWindow(nullptr)
+	: m_Width(width),
+	m_Height(height),
+	m_Title(title),
+	m_GLFWWindow(nullptr),
+	m_Font(nullptr)
 {
 	if (!Init())
 	{
@@ -66,17 +66,52 @@ void Window::InitImGui()
 	io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
 	//io.ConfigViewportsNoAutoMerge = true;
 	//io.ConfigViewportsNoTaskBarIcon = true;
+	m_Font = io.Fonts->AddFontFromFileTTF("res/Cascadia Mono PL Bold 700.otf", 14);
 
-	ImGuiStyle& style = ImGui::GetStyle();
-	style.WindowRounding = 0.0f;
-	style.Colors[ImGuiCol_WindowBg].w = 1.0f;
-
-	// Setup Dear ImGui style
-	ImGui::StyleColorsClassic();
+	InitImGuiStyle();
 
 	// Setup Platform/Renderer backends
 	ImGui_ImplGlfw_InitForOpenGL(m_GLFWWindow, true);
 	ImGui_ImplOpenGL3_Init("#version 130");
+}
+
+void Window::InitImGuiStyle()
+{
+	ImGui::StyleColorsDark();
+
+	ImGuiStyle& style = ImGui::GetStyle();
+	style.WindowRounding = 0.0f;
+	style.FrameBorderSize = 1.0f;
+	style.FrameRounding = 3.0f;
+	style.WindowTitleAlign.x = 0.5f;
+	style.WindowMenuButtonPosition = ImGuiDir_None;
+
+	// Colors
+	ImVec4* colors = ImGui::GetStyle().Colors;
+	colors[ImGuiCol_FrameBg] = ImVec4(0.16f, 0.16f, 0.20f, 0.54f);
+	colors[ImGuiCol_FrameBgHovered] = ImVec4(0.31f, 0.31f, 0.39f, 0.40f);
+	colors[ImGuiCol_FrameBgActive] = ImVec4(0.39f, 0.39f, 0.47f, 0.67f);
+	colors[ImGuiCol_TitleBgActive] = ImVec4(0.12f, 0.12f, 0.12f, 1.00f);
+	colors[ImGuiCol_CheckMark] = ImVec4(0.31f, 0.31f, 0.31f, 1.00f);
+	colors[ImGuiCol_SliderGrab] = ImVec4(0.39f, 0.39f, 0.39f, 1.00f);
+	colors[ImGuiCol_SliderGrabActive] = ImVec4(0.59f, 0.59f, 0.59f, 1.00f);
+	colors[ImGuiCol_Button] = ImVec4(0.31f, 0.31f, 0.31f, 0.40f);
+	colors[ImGuiCol_ButtonHovered] = ImVec4(0.39f, 0.39f, 0.39f, 1.00f);
+	colors[ImGuiCol_ButtonActive] = ImVec4(0.59f, 0.59f, 0.59f, 1.00f);
+	colors[ImGuiCol_Header] = ImVec4(0.31f, 0.31f, 0.31f, 0.31f);
+	colors[ImGuiCol_HeaderHovered] = ImVec4(0.39f, 0.39f, 0.39f, 0.80f);
+	colors[ImGuiCol_HeaderActive] = ImVec4(0.59f, 0.59f, 0.59f, 1.00f);
+	colors[ImGuiCol_SeparatorHovered] = ImVec4(0.39f, 0.39f, 0.39f, 0.78f);
+	colors[ImGuiCol_SeparatorActive] = ImVec4(0.59f, 0.59f, 0.59f, 1.00f);
+	colors[ImGuiCol_ResizeGrip] = ImVec4(0.31f, 0.31f, 0.31f, 0.20f);
+	colors[ImGuiCol_ResizeGripHovered] = ImVec4(0.39f, 0.39f, 0.39f, 0.67f);
+	colors[ImGuiCol_ResizeGripActive] = ImVec4(0.59f, 0.59f, 0.59f, 0.95f);
+	colors[ImGuiCol_Tab] = ImVec4(0.31f, 0.31f, 0.31f, 0.86f);
+	colors[ImGuiCol_TabHovered] = ImVec4(0.39f, 0.39f, 0.39f, 0.80f);
+	colors[ImGuiCol_TabActive] = ImVec4(0.59f, 0.59f, 0.59f, 1.00f);
+	colors[ImGuiCol_TabUnfocused] = ImVec4(0.10f, 0.10f, 0.10f, 0.97f);
+	colors[ImGuiCol_TabUnfocusedActive] = ImVec4(0.16f, 0.16f, 0.16f, 1.00f);
+	colors[ImGuiCol_DockingPreview] = ImVec4(0.35f, 0.35f, 0.35f, 0.70f);
 }
 
 void Window::Update()
@@ -99,6 +134,8 @@ void Window::Render(KR580VM80A* emu)
 	ImGui_ImplGlfw_NewFrame();
 	ImGui::NewFrame();
 	ImGui::DockSpaceOverViewport();
+
+	ImGui::PushFont(m_Font);
 
 	if (ImGui::BeginMainMenuBar())
 	{
@@ -136,6 +173,8 @@ void Window::Render(KR580VM80A* emu)
 
 	for (View* view : m_Views)
 		view->Render(emu);
+
+	ImGui::PopFont();
 }
 
 void Window::Add(View* view)
