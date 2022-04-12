@@ -157,8 +157,10 @@ std::vector<std::string> Disassembler::GetMnemonics(const std::vector<uint8_t>& 
 					}
 				}
 				
-				if(arg.Length != 0)
+				if (arg.Length != 0)
+				{
 					res.push_back(line + '\n');
+				}
 			}
 		}
 		else
@@ -198,7 +200,7 @@ void Disassembler::Disassemble(const std::vector<uint8_t>& byteArr, const int of
 			int ind = uint16_t (ref.first - ((uint16_t)offset));
 			int labelIndex = getLabelIndex(byteArr, ind) + proceed;
 			proceed++;
-			res.insert(res.begin() + labelIndex, ref.second);
+			res.insert(res.begin() + labelIndex, ref.second + "\n");
 		}
 	}
 	catch (const std::string ex)
@@ -206,10 +208,14 @@ void Disassembler::Disassemble(const std::vector<uint8_t>& byteArr, const int of
 		errorOccured = true;
 		disassembleError.WriteError(toHexString((uint16_t)errAddr), ex);
 	}
-	
+	mnemonics.clear();
 	if (!errorOccured)
 	{
-		mnemonics = res;
+		for (auto mnem : res)
+		{
+			if(mnem != "NOP\n")
+				mnemonics.push_back(mnem);
+		}
 	}
 }
 
