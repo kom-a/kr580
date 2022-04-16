@@ -1,16 +1,16 @@
-#include "Toolbar.h"
+#include "ToolbarView.h"
 
-Toolbar::Toolbar()
+ToolbarView::ToolbarView()
 {
 
 }
 
-Toolbar::~Toolbar()
+ToolbarView::~ToolbarView()
 {
 
 }
 
-void Toolbar::Render(KR580VM80A* emu)
+void ToolbarView::Render(KR580VM80A* emu)
 {
 	ImGui::Begin("##toolbar", nullptr, ImGuiWindowFlags_NoDecoration | 
 		ImGuiWindowFlags_NoTitleBar | 

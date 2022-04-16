@@ -10,7 +10,8 @@ Window::Window(int32_t width, int32_t height, const std::string& title)
 	: m_Width(width),
 	m_Height(height),
 	m_Title(title),
-	m_GLFWWindow(nullptr)
+	m_GLFWWindow(nullptr),
+	m_Views()
 {
 	if (!Init())
 	{
@@ -21,8 +22,8 @@ Window::Window(int32_t width, int32_t height, const std::string& title)
 
 Window::~Window()
 {
-	for (int i = 0; i < m_Views.size(); i++)
-		delete m_Views[i];
+	for (View* view : m_Views)
+		delete view;
 
 	ImGui_ImplOpenGL3_Shutdown();
 	ImGui_ImplGlfw_Shutdown();
@@ -149,17 +150,20 @@ void Window::Render(KR580VM80A* emu)
 		if (ImGui::BeginMenu("View"))
 		{
 			if (ImGui::MenuItem("Editor"))
-			{
-				//Do something
-			}
+				m_EditorView->Open();
 			if (ImGui::MenuItem("Memory"))
-			{
-				//Do something
-			}
+				m_MemoryView->Open();
+			if (ImGui::MenuItem("Registers"))
+				m_RegistersView->Open();
 			if (ImGui::MenuItem("Stack"))
-			{
-				//Do something
-			}
+				m_StackView->Open();
+			if (ImGui::MenuItem("In ports"))
+				m_InPortView->Open();
+			if (ImGui::MenuItem("Out ports"))
+				m_OutPortView->Open();
+			if (ImGui::MenuItem("Stand tools"))
+				m_StandToolsView->Open();
+
 			ImGui::EndMenu();
 		}
 
@@ -180,11 +184,6 @@ void Window::Render(KR580VM80A* emu)
 
 	for (View* view : m_Views)
 		view->Render(emu);
-}
-
-void Window::Add(View* view)
-{
-	m_Views.push_back(view);
 }
 
 void GLFWErrorCallback(int error, const char* description)

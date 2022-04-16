@@ -4,11 +4,11 @@
 
 #include <imgui/imgui.h>
 
-class Toolbar : public View
+class ToolbarView : public View
 {
 public:
-	Toolbar();
-	~Toolbar();
+	ToolbarView();
+	~ToolbarView();
 
 	void Render(KR580VM80A* emu);
 };
