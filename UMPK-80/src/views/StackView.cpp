@@ -6,6 +6,8 @@ StackView::StackView()
 	m_MemoryEditor.Cols = 1;
 	m_MemoryEditor.OptShowAscii = false;
 	m_MemoryEditor.OptShowOptions = false;
+
+	m_Open = false;
 }
 
 StackView::~StackView()

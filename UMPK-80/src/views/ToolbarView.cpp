@@ -12,11 +12,18 @@ ToolbarView::~ToolbarView()
 
 void ToolbarView::Render(KR580VM80A* emu)
 {
-	ImGui::Begin("##toolbar", nullptr, ImGuiWindowFlags_NoDecoration | 
-		ImGuiWindowFlags_NoTitleBar | 
-		ImGuiWindowFlags_NoCollapse | 
-		ImGuiWindowFlags_NoScrollbar | 
-		ImGuiWindowFlags_NoScrollWithMouse);
+#if 1
+	ImGuiWindowClass window_class;
+	window_class.DockNodeFlagsOverrideSet = ImGuiDockNodeFlags_NoTabBar 
+											| ImGuiDockNodeFlags_NoDockingSplitMe 
+											| ImGuiDockNodeFlags_NoDockingOverMe;
+	ImGui::SetNextWindowClass(&window_class);
+
+	ImGuiWindowFlags window_flags = 0
+		| ImGuiWindowFlags_NoTitleBar
+		| ImGuiWindowFlags_NoScrollbar
+		| ImGuiWindowFlags_NoSavedSettings;
+	ImGui::Begin("##toolbar", nullptr, ImGuiWindowFlags_NoDecoration);
 
 	if (ImGui::Button("Load"))
 	{
@@ -45,4 +52,15 @@ void ToolbarView::Render(KR580VM80A* emu)
 	}
 
 	ImGui::End();
+#else
+	ImGui::Begin("Test window");
+
+	if (ImGui::Button("Test"))
+	{
+		// Do something
+	}
+
+	ImGui::End();
+#endif
+
 }

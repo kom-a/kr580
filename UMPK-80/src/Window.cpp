@@ -164,6 +164,8 @@ void Window::Render(KR580VM80A* emu)
 			if (ImGui::MenuItem("Stand tools"))
 				m_StandToolsView->Open();
 
+			ImGui::Separator();
+
 			ImGui::EndMenu();
 		}
 

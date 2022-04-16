@@ -3,6 +3,7 @@
 #include "View.h"
 
 #include <imgui/imgui.h>
+#include <imgui/imgui_internal.h>
 
 class ToolbarView : public View
 {
