@@ -165,6 +165,15 @@ void Window::Render(KR580VM80A* emu)
 			ImGui::EndMenu();
 		}
 
+		if (ImGui::BeginMenu("Help"))
+		{
+			if (ImGui::MenuItem("Built-in"))
+			{
+				//Do something
+			}
+			ImGui::EndMenu();
+		}
+
 		ImGui::EndMainMenuBar();
 	}
 
