@@ -36,7 +36,6 @@ private:
 	GLFWwindow* m_GLFWWindow;
 	int32_t m_Width, m_Height;
 	std::string m_Title;
-	ImFont* m_Font;
 
 	std::vector<View*> m_Views;
 };

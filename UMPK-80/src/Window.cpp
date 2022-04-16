@@ -10,8 +10,7 @@ Window::Window(int32_t width, int32_t height, const std::string& title)
 	: m_Width(width),
 	m_Height(height),
 	m_Title(title),
-	m_GLFWWindow(nullptr),
-	m_Font(nullptr)
+	m_GLFWWindow(nullptr)
 {
 	if (!Init())
 	{
@@ -66,7 +65,8 @@ void Window::InitImGui()
 	io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
 	//io.ConfigViewportsNoAutoMerge = true;
 	//io.ConfigViewportsNoTaskBarIcon = true;
-	m_Font = io.Fonts->AddFontFromFileTTF("res/Cascadia Mono PL Bold 700.otf", 14);
+	auto font = io.Fonts->AddFontFromFileTTF("res/RobotoMono-Bold.ttf", 18);
+	io.FontDefault = font;
 
 	InitImGuiStyle();
 
@@ -135,8 +135,6 @@ void Window::Render(KR580VM80A* emu)
 	ImGui::NewFrame();
 	ImGui::DockSpaceOverViewport();
 
-	ImGui::PushFont(m_Font);
-
 	if (ImGui::BeginMainMenuBar())
 	{
 		if (ImGui::BeginMenu("File"))
@@ -182,8 +180,6 @@ void Window::Render(KR580VM80A* emu)
 
 	for (View* view : m_Views)
 		view->Render(emu);
-
-	ImGui::PopFont();
 }
 
 void Window::Add(View* view)
