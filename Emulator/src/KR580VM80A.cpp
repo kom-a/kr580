@@ -52,6 +52,11 @@ void KR580VM80A::UpdateZSP(WORD value)
 	Flag.P = ones % 2 == 0 ? true : false;
 }
 
+void KR580VM80A::UpdateAC(WORD old_value, WORD new_value)
+{
+	Flag.AC = (old_value & 0xF0) != (new_value & 0xF0);
+}
+
 WORD KR580VM80A::Fetch()
 {
 	return Memory[PC++];
@@ -74,29 +79,37 @@ DWORD KR580VM80A::FetchAddress()
 void KR580VM80A::Add(WORD& reg, WORD value)
 {
 	Flag.CY = reg > (WORD)0xFF - value ? 1 : 0;
+	WORD old = reg;
 	reg += value;
+	UpdateAC(old, reg);
 }
 
 void KR580VM80A::Sub(WORD& reg, WORD value)
 {
 	Flag.CY = reg < value ? 1 : 0;
+	WORD old = reg;
 	reg -= value;
+	UpdateAC(old, reg);
 }
 
 void KR580VM80A::Adc(WORD& reg, WORD value)
 {
+	WORD old = reg;
 	Add(reg, value);
 	bool carry = Flag.CY;
 	Add(A, Flag.CY);
 	Flag.CY = carry ? carry : Flag.CY;
+	UpdateAC(old, reg);
 }
 
 void KR580VM80A::Sbb(WORD& reg, WORD value)
 {
+	WORD old = reg;
 	Sub(reg, value);
 	bool carry = Flag.CY;
 	Sub(A, Flag.CY);
 	Flag.CY = carry ? carry : Flag.CY;
+	UpdateAC(old, reg);
 }
 
 void KR580VM80A::Push(DWORD value)
@@ -386,7 +399,10 @@ void KR580VM80A::Step()
 	} break;
 	case CMP_A:
 	{
-		UpdateZSP(0);
+		WORD old = A;
+		Sub(A, A);
+		UpdateZSP(A);
+		A += old;
 	} break;
 	case CMP_B:
 	{

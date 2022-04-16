@@ -27,6 +27,7 @@ public:
 private:
 	void InitRegisters();
 	void UpdateZSP(WORD value);
+	void UpdateAC(WORD old_value, WORD new_value);
 	WORD Fetch();
 	Opcode FetchOpcode();
 	DWORD FetchAddress();
@@ -36,6 +37,7 @@ private:
 	void Sbb(WORD& reg, WORD value);
 	void Push(DWORD value);
 	DWORD Pop();
+	bool IsBuildInAddress(DWORD address);
 
 public:
 	uint8_t* Memory;
