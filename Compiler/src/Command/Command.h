@@ -7,7 +7,8 @@
 
 const std::map<std::string, int> BuilInLabels
 {
-    {"DISPLAY", 0x1234},
+    {"DISPLAY", 0x01C8},
+    {"DECODE_DISPLAY", 0x01E9},
 };
 
 const COMMAND_PROTOTYPE Prototypes[]
