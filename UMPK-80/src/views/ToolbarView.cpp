@@ -19,11 +19,7 @@ void ToolbarView::Render(KR580VM80A* emu)
 											| ImGuiDockNodeFlags_NoDockingOverMe;
 	ImGui::SetNextWindowClass(&window_class);
 
-	ImGuiWindowFlags window_flags = 0
-		| ImGuiWindowFlags_NoTitleBar
-		| ImGuiWindowFlags_NoScrollbar
-		| ImGuiWindowFlags_NoSavedSettings;
-	ImGui::Begin("##toolbar", nullptr, ImGuiWindowFlags_NoDecoration);
+	ImGui::Begin("##toolbar");
 
 	if (ImGui::Button("Load"))
 	{
