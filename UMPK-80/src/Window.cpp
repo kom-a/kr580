@@ -6,12 +6,13 @@
 #include <imgui/backends/imgui_impl_glfw.h>
 #include <imgui/backends/imgui_impl_opengl3.h>
 
+#include "ViewsController.h"
+
 Window::Window(int32_t width, int32_t height, const std::string& title)
 	: m_Width(width),
 	m_Height(height),
 	m_Title(title),
-	m_GLFWWindow(nullptr),
-	m_Views()
+	m_GLFWWindow(nullptr)
 {
 	if (!Init())
 	{
@@ -22,9 +23,6 @@ Window::Window(int32_t width, int32_t height, const std::string& title)
 
 Window::~Window()
 {
-	for (View* view : m_Views)
-		delete view;
-
 	ImGui_ImplOpenGL3_Shutdown();
 	ImGui_ImplGlfw_Shutdown();
 	ImGui::DestroyContext();
@@ -136,6 +134,8 @@ void Window::Render(KR580VM80A* emu)
 	ImGui::NewFrame();
 	ImGui::DockSpaceOverViewport();
 
+	ViewsController& views_controller = ViewsController::GetInstance();
+
 	if (ImGui::BeginMainMenuBar())
 	{
 		if (ImGui::BeginMenu("File"))
@@ -150,19 +150,19 @@ void Window::Render(KR580VM80A* emu)
 		if (ImGui::BeginMenu("View"))
 		{
 			if (ImGui::MenuItem("Editor"))
-				m_EditorView->Open();
+				views_controller.GetEditorView()->Open();
 			if (ImGui::MenuItem("Memory"))
-				m_MemoryView->Open();
+				views_controller.GetMemoryView()->Open();
 			if (ImGui::MenuItem("Registers"))
-				m_RegistersView->Open();
+				views_controller.GetRegisterView()->Open();
 			if (ImGui::MenuItem("Stack"))
-				m_StackView->Open();
+				views_controller.GetStackView()->Open();
 			if (ImGui::MenuItem("In ports"))
-				m_InPortView->Open();
+				views_controller.GetInPortsView()->Open();
 			if (ImGui::MenuItem("Out ports"))
-				m_OutPortView->Open();
+				views_controller.GetOutPortsView()->Open();
 			if (ImGui::MenuItem("Stand tools"))
-				m_StandToolsView->Open();
+				views_controller.GetStandToolsView()->Open();
 
 			ImGui::Separator();
 
@@ -184,8 +184,7 @@ void Window::Render(KR580VM80A* emu)
 	ImGui::ShowDemoWindow();
 	ImGui::ShowMetricsWindow();
 
-	for (View* view : m_Views)
-		view->Render(emu);
+	views_controller.Render(emu);
 }
 
 void GLFWErrorCallback(int error, const char* description)
