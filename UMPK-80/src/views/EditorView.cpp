@@ -96,33 +96,6 @@ void EditorView::Render(KR580VM80A* emu)
 
 	const uint32_t offset = 0x0800;	// Hardcode this for now
 
-	if (ImGui::Button("Assemble"))
-	{
-		TextEditor::ErrorMarkers error_markers;
-		auto& source_code = m_Editor.GetText();
-		
-		m_Compiler.Compile(source_code, offset);
-
-		if (!m_Compiler.errorOccured)
-		{
-			std::vector<uint8_t>& program = m_Compiler.resultBinary;
-			emu->LoadProgram(program, offset);
-		}
-		else
-		{
-			for (auto& error : m_Compiler.compileErrors.messages)
-			{
-				auto& line = std::get<0>(error);
-				auto& message = std::get<1>(error);
-
-				auto& pair = std::make_pair<const int, std::string>(std::move(line), std::move(message));
-				error_markers.insert(pair);
-			}
-		}
-
-		m_Editor.SetErrorMarkers(error_markers);
-	}
-
 	m_Editor.Render("Editor");
 
 	ImGui::End();
