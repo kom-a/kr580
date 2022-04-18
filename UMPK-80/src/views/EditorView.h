@@ -20,6 +20,9 @@ public:
 	inline void SetText(const std::string& source) { m_Editor.SetText(source); }
 	inline void SetErrors(TextEditor::ErrorMarkers markers) { m_Editor.SetErrorMarkers(markers); }
 
+	bool LoadFromFile(const std::string& filename);
+	bool SaveToFile(const std::string& filename);
+
 private:
 	TextEditor m_Editor;
 	Compiler m_Compiler;

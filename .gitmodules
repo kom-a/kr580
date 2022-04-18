@@ -11,3 +11,6 @@
 [submodule "UMPK-80/vendor/imgui/ImGuiColorTextEdit"]
 	path = UMPK-80/vendor/imgui/ImGuiColorTextEdit
 	url = https://github.com/kom-a/ImGuiColorTextEdit.git
+[submodule "UMPK-80/vendor/imgui/ImGui-Addons"]
+	path = UMPK-80/vendor/imgui/ImGui-Addons
+	url = https://github.com/gallickgunner/ImGui-Addons.git

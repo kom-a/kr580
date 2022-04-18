@@ -7,6 +7,7 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <imgui/imgui.h>
+#include <ImGuiFileBrowser.h>
 
 #include "Emulator.h"
 
@@ -35,4 +36,6 @@ private:
 	GLFWwindow* m_GLFWWindow;
 	int32_t m_Width, m_Height;
 	std::string m_Title;
+
+	imgui_addons::ImGuiFileBrowser m_FileDialog;
 };

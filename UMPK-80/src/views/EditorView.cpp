@@ -1,6 +1,7 @@
 #include "EditorView.h"
 
 #include <sstream>
+#include <fstream>
 
 EditorView::EditorView()
 	: m_Editor(),
@@ -10,9 +11,6 @@ EditorView::EditorView()
 	m_Open = true;
 
 	m_Editor.SetShowWhitespaces(false);
-	TextEditor::ErrorMarkers markers;
-	markers.insert(std::make_pair<int, std::string>(6, "Unknown operation"));
-	m_Editor.SetErrorMarkers(markers);
 
 	auto lang = TextEditor::LanguageDefinition::C();
 	lang.mIdentifiers.clear();
@@ -92,11 +90,46 @@ void EditorView::Render(KR580VM80A* emu)
 	if (!m_Open)
 		return;
 
-	ImGui::Begin("Editor", &m_Open);
-
 	const uint32_t offset = 0x0800;	// Hardcode this for now
 
-	m_Editor.Render("Editor");
+	auto cpos = m_Editor.GetCursorPosition();
+	static const char* fileToEdit = "C:/Users/Камиль/Desktop/source_code.asm";
 
+	ImGui::Begin("Editor", &m_Open, ImGuiWindowFlags_HorizontalScrollbar);
+
+	auto& style = ImGui::GetStyle();
+	ImVec2 editor_size = ImGui::GetContentRegionAvail();
+	editor_size.y -= ImGui::GetFontSize() * 2 + style.CellPadding.y * 2;
+
+	ImGui::Text("%s%s", fileToEdit, m_Editor.CanUndo() ? "*" : " ");
+	m_Editor.Render("Editor", editor_size);
+	ImGui::Text("%d:%-6d", cpos.mLine + 1, cpos.mColumn + 1);
+	
 	ImGui::End();
+}
+
+bool EditorView::LoadFromFile(const std::string& filename)
+{
+	std::ifstream file(filename);
+	if (!file.is_open())
+		return false;
+
+	std::stringstream source;
+	std::string line;
+	while (std::getline(file, line)) {
+		source << line << '\n';
+	}
+
+	m_Editor.SetText(source.str());
+	return true;
+}
+
+bool EditorView::SaveToFile(const std::string& filename)
+{
+	std::ofstream file(filename);
+	if (!file.is_open())
+		return false;
+
+	file << m_Editor.GetText();
+	return true;
 }

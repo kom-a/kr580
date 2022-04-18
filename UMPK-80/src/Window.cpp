@@ -8,11 +8,16 @@
 
 #include "ViewsController.h"
 
+#define SOURCE_CODE_FILE_FORMAT ".asm"
+#define MACHINE_CODE_FILE_FORMAT ".obj"
+#define FILE_FORMATS (SOURCE_CODE_FILE_FORMAT "," MACHINE_CODE_FILE_FORMAT)
+
 Window::Window(int32_t width, int32_t height, const std::string& title)
 	: m_Width(width),
 	m_Height(height),
 	m_Title(title),
-	m_GLFWWindow(nullptr)
+	m_GLFWWindow(nullptr),
+	m_FileDialog()
 {
 	if (!Init())
 	{
@@ -136,11 +141,13 @@ void Window::Render(KR580VM80A* emu)
 
 	ViewsController& views_controller = ViewsController::GetInstance();
 
+	bool load_file = false, save_file = false;
+
 	if (ImGui::BeginMainMenuBar())
 	{
 		if (ImGui::BeginMenu("File"))
 		{
-			if (ImGui::MenuItem("New"))
+			if (ImGui::MenuItem("New", "Ctrl + N"))
 			{
 				EditorView* editor = views_controller.GetEditorView();
 				TextEditor::ErrorMarkers no_errors;
@@ -151,17 +158,22 @@ void Window::Render(KR580VM80A* emu)
 				editor->SetText(empty_source);
 				emu->Init();
 			}
-			if (ImGui::MenuItem("Open"))
+			if (ImGui::MenuItem("Open", "Ctrl + O"))
 			{
-				//Do something
+				load_file = true;
 			}
+			if (ImGui::MenuItem("Save", "Ctrl + S"))
+			{
+				
+			}
+			ImGui::Separator();
 			if (ImGui::MenuItem("Save as *.asm"))
 			{
-				//Do something
+				 save_file = true;
 			}
 			if (ImGui::MenuItem("Save as *.obj"))
 			{
-				//Do something
+				save_file = true;
 			}
 			ImGui::Separator();
 			if (ImGui::MenuItem("Exit"))
@@ -203,6 +215,38 @@ void Window::Render(KR580VM80A* emu)
 		}
 
 		ImGui::EndMainMenuBar();
+	}
+
+	if (load_file)
+		ImGui::OpenPopup("Open File");
+	if (save_file)
+		ImGui::OpenPopup("Save File");
+
+	if (m_FileDialog.showFileDialog("Open File", imgui_addons::ImGuiFileBrowser::DialogMode::OPEN, ImVec2(m_Width / 4, m_Height / 4), FILE_FORMATS))
+	{
+		EditorView* editor = views_controller.GetEditorView();
+		if (!editor->LoadFromFile(m_FileDialog.selected_path))
+		{
+			// Do something
+			assert(false);
+		}
+	}
+	if (m_FileDialog.showFileDialog("Save File", imgui_addons::ImGuiFileBrowser::DialogMode::SAVE, ImVec2(m_Width / 4, m_Height / 4), FILE_FORMATS))
+	{
+		EditorView* editor = views_controller.GetEditorView();
+
+		if (m_FileDialog.ext == SOURCE_CODE_FILE_FORMAT)
+		{
+			if (!editor->SaveToFile(m_FileDialog.selected_path))
+			{
+				// Do something
+				assert(false);
+			}
+		}
+		else if (m_FileDialog.ext == MACHINE_CODE_FILE_FORMAT)
+		{
+			// save memory dump into file
+		}
 	}
 
 	ImGui::ShowDemoWindow();
