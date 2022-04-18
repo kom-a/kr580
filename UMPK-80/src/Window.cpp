@@ -142,7 +142,31 @@ void Window::Render(KR580VM80A* emu)
 		{
 			if (ImGui::MenuItem("New"))
 			{
+				EditorView* editor = views_controller.GetEditorView();
+				TextEditor::ErrorMarkers no_errors;
+				std::string empty_source;
+
+				// TODO: Ask if user wants to save previous source code or something
+				editor->SetErrors(no_errors);
+				editor->SetText(empty_source);
+				emu->Init();
+			}
+			if (ImGui::MenuItem("Open"))
+			{
 				//Do something
+			}
+			if (ImGui::MenuItem("Save as *.asm"))
+			{
+				//Do something
+			}
+			if (ImGui::MenuItem("Save as *.obj"))
+			{
+				//Do something
+			}
+			ImGui::Separator();
+			if (ImGui::MenuItem("Exit"))
+			{
+				glfwSetWindowShouldClose(m_GLFWWindow, true);
 			}
 			ImGui::EndMenu();
 		}

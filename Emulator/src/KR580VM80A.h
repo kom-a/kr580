@@ -21,6 +21,7 @@ public:
 	~KR580VM80A();
 
 public:
+	void Init();
 	bool LoadProgram(const std::vector<WORD>& program, size_t startAddress = 0x0800);
 	void Step();
 

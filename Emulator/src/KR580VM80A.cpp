@@ -11,18 +11,23 @@ KR580VM80A::KR580VM80A()
 	Memory = new uint8_t[MEMORY_SIZE];
 	In = new uint8_t[PORTS_SIZE];
 	Out = new uint8_t[PORTS_SIZE];
-
-	memset(Memory,	0, MEMORY_SIZE);
-	memset(In,		0, PORTS_SIZE);
-	memset(Out,		0, PORTS_SIZE);
-
-	InitRegisters();
-	Running = false;
+	
+	Init();
 }
 
 KR580VM80A::~KR580VM80A()
 {
 	delete[] Memory;
+}
+
+void KR580VM80A::Init()
+{
+	memset(Memory, 0, MEMORY_SIZE);
+	memset(In, 0, PORTS_SIZE);
+	memset(Out, 0, PORTS_SIZE);
+
+	InitRegisters();
+	Running = false;
 }
 
 void KR580VM80A::InitRegisters()
