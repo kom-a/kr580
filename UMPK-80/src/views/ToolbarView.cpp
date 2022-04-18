@@ -1,5 +1,7 @@
 #include "ToolbarView.h"
 
+#include <sstream>
+
 #include "../ViewsController.h"
 
 ToolbarView::ToolbarView()
@@ -56,7 +58,25 @@ void ToolbarView::Render(KR580VM80A* emu)
 	ImGui::SameLine();
 	if (ImGui::Button("Disassemble"))
 	{
+		uint8_t* user_memory = &emu->Memory[USER_MEMORY_OFFSET];
+		std::vector<uint8_t> machine_code = std::vector<uint8_t>(user_memory, user_memory + USER_MEMORY_SIZE);
+		m_Disassembler.Disassemble(machine_code, USER_MEMORY_OFFSET);
 
+		if (!m_Disassembler.errorOccured)
+		{
+			std::stringstream source;
+			for (auto& line : m_Disassembler.mnemonics)
+				source << line;
+			views_controller.GetEditorView()->SetText(source.str());
+		}
+		else
+		{
+			const std::string& error_line = std::get<0>(m_Disassembler.disassembleError.message);
+			const std::string& error_message = std::get<1>(m_Disassembler.disassembleError.message);
+			std::string message = "An error occurred: " + error_message + "on line " + error_line;
+
+			views_controller.GetEditorView()->SetText(message);
+		}
 	}
 	ImGui::SameLine();
 	if (ImGui::Button("Step"))
