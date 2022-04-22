@@ -8,15 +8,15 @@
 class MemoryView : public View
 {
 public:
-	MemoryView();
+	MemoryView(uint8_t* memory, size_t memory_size);
 	~MemoryView();
 
 	void Render(KR580VM80A* emu);
-
-private:
-	void DrawContent();
-	void CalcSizes();
+	bool LoadFromFile(const std::string& filename);
+	bool SaveToFile(const std::string& filename);
 
 private:
 	MemoryEditor m_MemoryEditor;
+	uint8_t* m_Memory;
+	size_t m_MemorySize;
 };

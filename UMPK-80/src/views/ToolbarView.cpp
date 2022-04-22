@@ -73,7 +73,7 @@ void ToolbarView::Render(KR580VM80A* emu)
 		{
 			const std::string& error_line = std::get<0>(m_Disassembler.disassembleError.message);
 			const std::string& error_message = std::get<1>(m_Disassembler.disassembleError.message);
-			std::string message = "An error occurred: " + error_message + "on line " + error_line;
+			std::string message = error_message + "at address \'0x" + error_line + "\'";
 
 			views_controller.GetEditorView()->SetText(message);
 		}

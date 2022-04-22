@@ -121,6 +121,7 @@ bool EditorView::LoadFromFile(const std::string& filename)
 	}
 
 	m_Editor.SetText(source.str());
+	file.close();
 	return true;
 }
 
@@ -131,5 +132,6 @@ bool EditorView::SaveToFile(const std::string& filename)
 		return false;
 
 	file << m_Editor.GetText();
+	file.close();
 	return true;
 }

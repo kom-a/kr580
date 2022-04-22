@@ -13,7 +13,7 @@ int main()
 	ViewsController& views_controller = ViewsController::GetInstance();
 	views_controller.SetToolbarView(new ToolbarView());
 	views_controller.SetEditorView(new EditorView());
-	views_controller.SetMemoryView(new MemoryView());
+	views_controller.SetMemoryView(new MemoryView(emu->Memory + USER_MEMORY_OFFSET, USER_MEMORY_SIZE));
 	views_controller.SetStackView(new StackView());
 	views_controller.SetRegistersView(new RegistersView());
 	views_controller.SetInPortView(new InPortView());

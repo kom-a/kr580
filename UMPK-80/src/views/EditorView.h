@@ -13,13 +13,13 @@ public:
 	EditorView();
 	~EditorView();
 
-	void Render(KR580VM80A* emu);
-
 public:
 	inline std::string GetText() const { return m_Editor.GetText(); } 
 	inline void SetText(const std::string& source) { m_Editor.SetText(source); }
 	inline void SetErrors(TextEditor::ErrorMarkers markers) { m_Editor.SetErrorMarkers(markers); }
 
+
+	void Render(KR580VM80A* emu);
 	bool LoadFromFile(const std::string& filename);
 	bool SaveToFile(const std::string& filename);
 

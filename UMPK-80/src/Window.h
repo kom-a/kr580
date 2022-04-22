@@ -26,6 +26,7 @@ public:
 
 private:
 	friend void GLFWErrorCallback(int error, const char* description);
+	friend void GLFWWindowResizeCallback(GLFWwindow* window, int width, int height);
 
 private:
 	bool Init();

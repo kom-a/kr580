@@ -12,6 +12,9 @@
 #define MACHINE_CODE_FILE_FORMAT ".obj"
 #define FILE_FORMATS (SOURCE_CODE_FILE_FORMAT "," MACHINE_CODE_FILE_FORMAT)
 
+void GLFWErrorCallback(int error, const char* description);
+void GLFWWindowResizeCallback(GLFWwindow* window, int width, int height);
+
 Window::Window(int32_t width, int32_t height, const std::string& title)
 	: m_Width(width),
 	m_Height(height),
@@ -47,6 +50,8 @@ bool Window::Init()
 		return false;
 	glfwMakeContextCurrent(m_GLFWWindow);
 	glfwSwapInterval(1);
+	glfwSetWindowUserPointer(m_GLFWWindow, this);
+	glfwSetWindowSizeCallback(m_GLFWWindow, GLFWWindowResizeCallback);
 
 	InitImGui();
 
@@ -222,30 +227,54 @@ void Window::Render(KR580VM80A* emu)
 	if (save_file)
 		ImGui::OpenPopup("Save File");
 
-	if (m_FileDialog.showFileDialog("Open File", imgui_addons::ImGuiFileBrowser::DialogMode::OPEN, ImVec2(m_Width / 4, m_Height / 4), FILE_FORMATS))
+	if (m_FileDialog.showFileDialog("Open File", imgui_addons::ImGuiFileBrowser::DialogMode::OPEN, ImVec2(0, 0), FILE_FORMATS))
 	{
-		EditorView* editor = views_controller.GetEditorView();
-		if (!editor->LoadFromFile(m_FileDialog.selected_path))
-		{
-			// Do something
-			assert(false);
-		}
-	}
-	if (m_FileDialog.showFileDialog("Save File", imgui_addons::ImGuiFileBrowser::DialogMode::SAVE, ImVec2(m_Width / 4, m_Height / 4), FILE_FORMATS))
-	{
-		EditorView* editor = views_controller.GetEditorView();
-
 		if (m_FileDialog.ext == SOURCE_CODE_FILE_FORMAT)
 		{
-			if (!editor->SaveToFile(m_FileDialog.selected_path))
+			EditorView* editor_view = views_controller.GetEditorView();
+
+			if (!editor_view->LoadFromFile(m_FileDialog.selected_path))
 			{
-				// Do something
-				assert(false);
+				// Log an error during source code file loading
 			}
 		}
 		else if (m_FileDialog.ext == MACHINE_CODE_FILE_FORMAT)
 		{
-			// save memory dump into file
+			MemoryView* memory_view = views_controller.GetMemoryView();
+
+			if (!memory_view->LoadFromFile(m_FileDialog.selected_path))
+			{
+				// Log an error during machine code file loading
+			}
+		}
+		else
+		{
+			// Incorrect file type
+		}
+	}
+	if (m_FileDialog.showFileDialog("Save File", imgui_addons::ImGuiFileBrowser::DialogMode::SAVE, ImVec2(0, 0), FILE_FORMATS))
+	{
+		if (m_FileDialog.ext == SOURCE_CODE_FILE_FORMAT)
+		{
+			EditorView* editor_view = views_controller.GetEditorView();
+
+			if (!editor_view->SaveToFile(m_FileDialog.selected_path))
+			{
+				// Log an error during source code saving to file
+			}
+		}
+		else if (m_FileDialog.ext == MACHINE_CODE_FILE_FORMAT)
+		{
+			MemoryView* memory_view = views_controller.GetMemoryView();
+
+			if (!memory_view->SaveToFile(m_FileDialog.selected_path))
+			{
+				// Log an error during machine code saving to file
+			}
+		}
+		else
+		{
+			// Incorrect file type
 		}
 	}
 
@@ -258,4 +287,11 @@ void Window::Render(KR580VM80A* emu)
 void GLFWErrorCallback(int error, const char* description)
 {
 	fprintf(stderr, "Glfw Error %d: %s\n", error, description);
+}
+
+void GLFWWindowResizeCallback(GLFWwindow* window, int width, int height)
+{
+	Window* user_window = (Window*)glfwGetWindowUserPointer(window);
+	user_window->m_Width = width;
+	user_window->m_Height = height;
 }
