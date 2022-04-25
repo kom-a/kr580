@@ -1,4 +1,4 @@
-workspace "KR580VM80A"
+workspace "kr580"
    configurations { "Debug", "Release" }
    architecture "x86"
    startproject "UMPK-80"

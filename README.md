@@ -1,4 +1,4 @@
-# KR580VM80A
+# kr580
 KR580VM80A emulator
 
 ## Getting started
