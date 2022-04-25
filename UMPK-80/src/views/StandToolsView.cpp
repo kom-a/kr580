@@ -10,12 +10,12 @@ StandToolsView::StandToolsView()
 	memset(m_OutPort5, 0, sizeof(int) * 8);
 	memset(m_Display, 0, sizeof(uint8_t) * 6);
 
-	m_Display[0] = 76;
-	m_Display[1] = 76;
-	m_Display[2] = 76;
-	m_Display[3] = 76;
-	m_Display[4] = 76;
-	m_Display[5] = 76;
+	m_Display[0] = 0x76;
+	m_Display[1] = 0x77;
+	m_Display[2] = 0x66;
+	m_Display[3] = 0x77;
+	m_Display[4] = 0x54;
+	m_Display[5] = 0x5c;
 }
 
 StandToolsView::~StandToolsView()
