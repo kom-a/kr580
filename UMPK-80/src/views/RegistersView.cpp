@@ -23,6 +23,8 @@ void RegistersView::Render(KR580VM80A* emu)
 	ImGui::Begin("Registers");
 
 	DrawRegister("A:", emu->A);
+	ImGui::SameLine();
+	DrawRegister("F:", emu->F);
 
 	DrawRegister("B:", emu->B);
 	ImGui::SameLine();
@@ -36,30 +38,6 @@ void RegistersView::Render(KR580VM80A* emu)
 	ImGui::SameLine();
 	DrawRegister("L:", emu->L);
 
-	ImGui::End();
-
-	return;
-	ImGui::Begin("Registers", &m_Open);
-
-	ImGui::Text("A: %02X", emu->A);
-	ImGui::SameLine();
-	ImGui::Text("F: %02X", emu->F);
-
-	ImGui::Text("B: %02X", emu->B);
-	ImGui::SameLine();
-	ImGui::Text("C: %02X", emu->C);
-
-	ImGui::Text("D: %02X", emu->D);
-	ImGui::SameLine();
-	ImGui::Text("E: %02X", emu->E);
-
-	ImGui::Text("H: %02X", emu->H);
-	ImGui::SameLine();
-	ImGui::Text("L: %02X", emu->L);
-
-	ImGui::Text("SP: %04X", emu->SP);
-	ImGui::Text("PC: %04X", emu->PC);
-	
 	ImGui::End();
 }
 
@@ -127,10 +105,7 @@ void RegistersView::DrawRegister(const char* label, WORD& reg)
 	}
 	else
 	{
-		if (reg == 0)
-			ImGui::TextDisabled("00");
-		else
-			ImGui::Text(m_Style.FormatByte, reg);
+		ImGui::Text(m_Style.FormatByte, reg);
 	}
 	if (ImGui::IsItemHovered() && ImGui::IsMouseClicked(0))
 	{
