@@ -136,6 +136,11 @@ DWORD KR580VM80A::Pop()
 	return PAIR(high, low);
 }
 
+void KR580VM80A::SetBuiltInFunction(size_t memory_address, void (*proc)(KR580VM80A* emu))
+{
+	m_BuiltInFunctions[memory_address] = proc;
+}
+
 void KR580VM80A::Step()
 {
 	Opcode opcode = FetchOpcode();
@@ -303,8 +308,17 @@ void KR580VM80A::Step()
 	case CALL_a16:
 	{
 		DWORD address = FetchAddress();
-		Push(PC);
-		PC = address;
+
+		if (m_BuiltInFunctions.find(address) != m_BuiltInFunctions.end())
+		{
+			void (*proc)(KR580VM80A*) = m_BuiltInFunctions[address];
+			proc(this);
+		}
+		else
+		{
+			Push(PC);
+			PC = address;
+		}
 	} break;
 	case CZ_a16:
 	{

@@ -11,7 +11,7 @@ public:
 	~StandToolsView();
 
 	void Render(KR580VM80A* emu);
-
+	void Display(uint8_t* display_data);
 private:
 	void PortToBits(uint8_t value, int bits[8]);
 	void BitsToPort(uint8_t& value, int bits[8]);

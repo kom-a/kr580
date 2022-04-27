@@ -2,6 +2,7 @@
 
 #include <vector>
 #include <inttypes.h>
+#include <unordered_map>
 
 #define WORD uint8_t
 #define DWORD uint16_t
@@ -38,8 +39,9 @@ private:
 	void Sbb(WORD& reg, WORD value);
 	void Push(DWORD value);
 	DWORD Pop();
-	bool IsBuildInAddress(DWORD address);
 
+public:
+	void SetBuiltInFunction(size_t memory_address, void (*proc)(KR580VM80A* emu));
 public:
 	uint8_t* Memory;
 	uint8_t *In, *Out; // Ports
@@ -106,4 +108,7 @@ public:
 
 	DWORD SP; // Stack pointer
 	DWORD PC; // Program counter
+	
+private:
+	std::unordered_map<size_t, void (*)(KR580VM80A*)> m_BuiltInFunctions; // Key - memory address, Value - procedure function pointer that handles built in call
 };

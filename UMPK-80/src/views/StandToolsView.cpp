@@ -153,3 +153,9 @@ void StandToolsView::Render(KR580VM80A* emu)
 	ImGui::End();
 }
 
+void StandToolsView::Display(uint8_t* display_data)
+{
+	for (int i = 0; i < 6; i++)
+		m_Display[i] = display_data[i];
+}
+
