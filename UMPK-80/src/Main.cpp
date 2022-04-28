@@ -7,12 +7,12 @@
 
 void Melody1FunctionProc(KR580VM80A* emu)
 {
-
+	assert(false && "Not implemented");
 }
 
 void Melody2FunctionProc(KR580VM80A* emu)
 {
-
+	assert(false && "Not implemented");
 }
 
 void DisplayProc(KR580VM80A* emu)

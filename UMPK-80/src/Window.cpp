@@ -74,7 +74,7 @@ void Window::InitImGui()
 	io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
 	//io.ConfigViewportsNoAutoMerge = true;
 	//io.ConfigViewportsNoTaskBarIcon = true;
-	auto font = io.Fonts->AddFontFromFileTTF("res/RobotoMono-Bold.ttf", 18);
+	auto font = io.Fonts->AddFontFromFileTTF("res/RobotoMono-Bold.ttf", 18, 0, io.Fonts->GetGlyphRangesCyrillic());
 	io.FontDefault = font;
 
 	InitImGuiStyle();
