@@ -99,11 +99,12 @@ void EditorView::Render(KR580VM80A* emu)
 
 	auto& style = ImGui::GetStyle();
 	ImVec2 editor_size = ImGui::GetContentRegionAvail();
-	editor_size.y -= ImGui::GetFontSize() * 2 + style.CellPadding.y * 2;
+	editor_size.y -= ImGui::GetFontSize() + style.CellPadding.y;
 
-	ImGui::Text("%s%s", fileToEdit, m_Editor.CanUndo() ? "*" : " ");
 	m_Editor.Render("Editor", editor_size);
 	ImGui::Text("%d:%-6d", cpos.mLine + 1, cpos.mColumn + 1);
+	ImGui::SameLine();
+	ImGui::Text("%s%s", fileToEdit, m_Editor.CanUndo() ? "*" : " ");
 	
 	ImGui::End();
 }

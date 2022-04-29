@@ -21,7 +21,7 @@ void RegistersView::Render(KR580VM80A* emu)
 	if (!m_Open)
 		return;
 
-	ImGui::Begin("Registers");
+	ImGui::Begin("Registers", &m_Open);
 
 	DrawRegister("A:", emu->A);
 	ImGui::SameLine();
