@@ -13,10 +13,11 @@ public:
 	void Render(KR580VM80A* emu);
 private:
 	void DrawRegister(const char* label, WORD& reg);
+	void DrawRegisterPair(const char* label, DWORD& reg);
 
 	struct State
 	{
-		WORD*	DataEditingAddr;
+		void*	DataEditingAddr;
 		bool	DataEditingTakeFocus;
 		char	DataInputBuf[32];
 	};
@@ -24,6 +25,7 @@ private:
 	struct Style
 	{
 		const char* FormatByte;
+		const char* FormatPair;
 	};
 
 	struct Sizes
