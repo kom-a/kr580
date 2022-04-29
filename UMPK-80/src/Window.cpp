@@ -152,7 +152,7 @@ void Window::Render(KR580VM80A* emu)
 	{
 		if (ImGui::BeginMenu("File"))
 		{
-			if (ImGui::MenuItem("New", "Ctrl + N"))
+			if (ImGui::MenuItem("New"))
 			{
 				EditorView* editor = views_controller.GetEditorView();
 				TextEditor::ErrorMarkers no_errors;
@@ -163,13 +163,9 @@ void Window::Render(KR580VM80A* emu)
 				editor->SetText(empty_source);
 				emu->Init();
 			}
-			if (ImGui::MenuItem("Open", "Ctrl + O"))
+			if (ImGui::MenuItem("Open"))
 			{
 				load_file = true;
-			}
-			if (ImGui::MenuItem("Save", "Ctrl + S"))
-			{
-				
 			}
 			ImGui::Separator();
 			if (ImGui::MenuItem("Save as *.asm"))
@@ -187,7 +183,46 @@ void Window::Render(KR580VM80A* emu)
 			}
 			ImGui::EndMenu();
 		}
+		if (ImGui::BeginMenu("Edit"))
+		{
+			EditorView* editor = views_controller.GetEditorView();
+			bool can_undo = editor->CanUndo();
+			bool can_redo = editor->CanRedo();
 
+			if(!can_undo)
+				ImGui::BeginDisabled();
+			if (ImGui::MenuItem("Undo", "Ctrl+Z"))
+			{
+				editor->Undo();
+			}
+			if (!can_undo)
+				ImGui::EndDisabled();
+
+			if (!can_redo)
+				ImGui::BeginDisabled();
+			if (ImGui::MenuItem("Redo", "Ctrl+Y"))
+			{
+
+			}
+			if (!can_redo)
+				ImGui::EndDisabled();
+			
+			ImGui::Separator();
+
+			if (ImGui::MenuItem("Cut", "Ctrl+X"))
+			{
+				editor->Cut();
+			}
+			if (ImGui::MenuItem("Copy", "Ctrl+C"))
+			{
+				editor->Copy();
+			}
+			if (ImGui::MenuItem("Paste", "Ctrl+V"))
+			{
+				editor->Paste();
+			}
+			ImGui::EndMenu();
+		}
 		if (ImGui::BeginMenu("View"))
 		{
 			if (ImGui::MenuItem("Editor"))
