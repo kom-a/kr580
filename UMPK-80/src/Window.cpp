@@ -15,6 +15,12 @@
 void GLFWErrorCallback(int error, const char* description);
 void GLFWWindowResizeCallback(GLFWwindow* window, int width, int height);
 
+static inline bool ends_with(std::string const& value, std::string const& ending)
+{
+	if (ending.size() > value.size()) return false;
+	return std::equal(ending.rbegin(), ending.rend(), value.rbegin());
+}
+
 Window::Window(int32_t width, int32_t height, const std::string& title)
 	: m_Width(width),
 	m_Height(height),
@@ -146,7 +152,7 @@ void Window::Render(KR580VM80A* emu)
 
 	ViewsController& views_controller = ViewsController::GetInstance();
 
-	bool load_file = false, save_file = false;
+	bool load_file = false, save_source_code = false, save_machine_code = false;
 
 	if (ImGui::BeginMainMenuBar())
 	{
@@ -170,11 +176,11 @@ void Window::Render(KR580VM80A* emu)
 			ImGui::Separator();
 			if (ImGui::MenuItem("Save as *.asm"))
 			{
-				 save_file = true;
+				 save_source_code = true;
 			}
 			if (ImGui::MenuItem("Save as *.obj"))
 			{
-				save_file = true;
+				save_machine_code = true;
 			}
 			ImGui::Separator();
 			if (ImGui::MenuItem("Exit"))
@@ -259,8 +265,10 @@ void Window::Render(KR580VM80A* emu)
 
 	if (load_file)
 		ImGui::OpenPopup("Open File");
-	if (save_file)
-		ImGui::OpenPopup("Save File");
+	if (save_source_code)
+		ImGui::OpenPopup("Save File#sourcecode");
+	if (save_machine_code)
+		ImGui::OpenPopup("Save File#machinecode");
 
 	if (m_FileDialog.showFileDialog("Open File", imgui_addons::ImGuiFileBrowser::DialogMode::OPEN, ImVec2(0, 0), FILE_FORMATS))
 	{
@@ -287,29 +295,32 @@ void Window::Render(KR580VM80A* emu)
 			// Incorrect file type
 		}
 	}
-	if (m_FileDialog.showFileDialog("Save File", imgui_addons::ImGuiFileBrowser::DialogMode::SAVE, ImVec2(0, 0), FILE_FORMATS))
+
+	if (m_FileDialog.showFileDialog("Save File#sourcecode", imgui_addons::ImGuiFileBrowser::DialogMode::SAVE, ImVec2(0, 0), SOURCE_CODE_FILE_FORMAT))
 	{
-		if (m_FileDialog.ext == SOURCE_CODE_FILE_FORMAT)
-		{
-			EditorView* editor_view = views_controller.GetEditorView();
+		std::string save_filename = ends_with(m_FileDialog.selected_path, SOURCE_CODE_FILE_FORMAT)
+			? m_FileDialog.selected_path
+			: m_FileDialog.selected_path.append(SOURCE_CODE_FILE_FORMAT);
 
-			if (!editor_view->SaveToFile(m_FileDialog.selected_path))
-			{
-				// Log an error during source code saving to file
-			}
-		}
-		else if (m_FileDialog.ext == MACHINE_CODE_FILE_FORMAT)
+		EditorView* editor_view = views_controller.GetEditorView();
+			
+		if (!editor_view->SaveToFile(save_filename))
 		{
-			MemoryView* memory_view = views_controller.GetMemoryView();
+			// Log an error during source code saving to file
+		}
+	}
 
-			if (!memory_view->SaveToFile(m_FileDialog.selected_path))
-			{
-				// Log an error during machine code saving to file
-			}
-		}
-		else
+	if (m_FileDialog.showFileDialog("Save File#machinecode", imgui_addons::ImGuiFileBrowser::DialogMode::SAVE, ImVec2(0, 0), MACHINE_CODE_FILE_FORMAT))
+	{
+		std::string save_filename = ends_with(m_FileDialog.selected_path, MACHINE_CODE_FILE_FORMAT)
+			? m_FileDialog.selected_path
+			: m_FileDialog.selected_path.append(MACHINE_CODE_FILE_FORMAT);
+
+		MemoryView* memory_view = views_controller.GetMemoryView();
+
+		if (!memory_view->SaveToFile(save_filename))
 		{
-			// Incorrect file type
+			// Log an error during machine code saving to file
 		}
 	}
 
