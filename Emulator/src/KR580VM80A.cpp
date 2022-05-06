@@ -18,6 +18,8 @@ KR580VM80A::KR580VM80A()
 KR580VM80A::~KR580VM80A()
 {
 	delete[] Memory;
+	delete[] In;
+	delete[] Out;
 }
 
 void KR580VM80A::Init()
