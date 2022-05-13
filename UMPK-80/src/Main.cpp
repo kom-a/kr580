@@ -49,7 +49,7 @@ WORD GetDisplayRepresentation(WORD value)
 void DecodeDisplayProc(KR580VM80A* emu)
 {
 	for (int i = 0; i < 6; i++)
-		emu->Memory[0x0BFA + i] = GetDisplayRepresentation(emu->Memory[0x0BF0 + i]);
+		emu->Memory[0x0BFA + i] = GetDisplayRepresentation(emu->Memory[0x0BF0 + 5 - i]);
 }
 
 int main()
