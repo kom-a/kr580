@@ -21,7 +21,6 @@ project "Emulator"
 
     includedirs
     {
-        "Shared/Include/",
         "Compiler/",
         "%{prj.name}/src/"
     }
@@ -60,9 +59,8 @@ project "Compiler"
 
     includedirs
     {
-        "Shared/Include",
-        "%{prj.name}/src"
-
+        "%{prj.name}/src",
+        "Emulator/"
     }
 
     filter "configurations:Debug"

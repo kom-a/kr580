@@ -1,5 +1,5 @@
 #include "Disassembler/Disassembler.h"
-#include "ISA.h"
+#include "Emulator.h"
 #include <sstream>
 #include <iomanip>
 #include "ErrorHandler/DisassemblerErrorHandler.h"
