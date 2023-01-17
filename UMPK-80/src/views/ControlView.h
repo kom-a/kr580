@@ -7,11 +7,11 @@
 
 #include "Compiler.h"
 
-class ToolbarView : public View
+class ControlView : public View
 {
 public:
-	ToolbarView();
-	~ToolbarView();
+	ControlView();
+	~ControlView();
 
 	void Render(KR580VM80A* emu);
 

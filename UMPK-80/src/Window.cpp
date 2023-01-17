@@ -152,6 +152,10 @@ void Window::Render(KR580VM80A* emu)
 
 	ViewsController& views_controller = ViewsController::GetInstance();
 
+	static ImGuiAxis toolbar1_axis = ImGuiAxis_X; // Your storage for the current direction.
+
+#if 1
+
 	bool load_file = false, save_source_code = false, save_machine_code = false;
 
 	if (ImGui::BeginMainMenuBar())
@@ -324,10 +328,13 @@ void Window::Render(KR580VM80A* emu)
 		}
 	}
 
+
+
 	ImGui::ShowDemoWindow();
 	ImGui::ShowMetricsWindow();
 
 	views_controller.Render(emu);
+#endif 
 }
 
 void GLFWErrorCallback(int error, const char* description)

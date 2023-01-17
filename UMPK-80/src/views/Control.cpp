@@ -1,31 +1,26 @@
-#include "ToolbarView.h"
+#include "ControlView.h"
 
 #include <sstream>
 
 #include "../ViewsController.h"
 
-ToolbarView::ToolbarView()
+ControlView::ControlView()
 	: m_Compiler(),
 	m_Disassembler()
 {
 
 }
 
-ToolbarView::~ToolbarView()
+ControlView::~ControlView()
 {
 
 }
 
-void ToolbarView::Render(KR580VM80A* emu)
+void ControlView::Render(KR580VM80A* emu)
 {
 	ViewsController& views_controller = ViewsController::GetInstance();
-	ImGuiWindowClass window_class;
-	window_class.DockNodeFlagsOverrideSet = ImGuiDockNodeFlags_NoTabBar 
-											| ImGuiDockNodeFlags_NoDockingSplitMe 
-											| ImGuiDockNodeFlags_NoDockingOverMe;
-	ImGui::SetNextWindowClass(&window_class);
 
-	ImGui::Begin("##toolbar");
+	ImGui::Begin("Contorl");
 
 	if (ImGui::Button("Assemble"))
 	{
@@ -55,7 +50,7 @@ void ToolbarView::Render(KR580VM80A* emu)
 
 		editor->SetErrors(compile_errors);
 	}
-	ImGui::SameLine();
+	
 	if (ImGui::Button("Disassemble"))
 	{
 		uint8_t* user_memory = &emu->Memory[USER_MEMORY_OFFSET];
@@ -78,22 +73,22 @@ void ToolbarView::Render(KR580VM80A* emu)
 			views_controller.GetEditorView()->SetText(message);
 		}
 	}
-	ImGui::SameLine();
+	
 	if (ImGui::Button("Step"))
 	{
 		emu->Step();
 	}
-	ImGui::SameLine();
+	
 	if (ImGui::Button("Run"))
 	{
 		emu->Running = true;
 	}
-	ImGui::SameLine();
+	
 	if (ImGui::Button("Stop"))
 	{
 		emu->Running = false;
 	}
-	ImGui::SameLine();
+	
 	if (ImGui::Button("Reset"))
 	{
 		emu->PC = USER_MEMORY_OFFSET;

@@ -25,7 +25,7 @@ public:
 	inline void SetInPortView(InPortView* view)			{ m_Views.push_back(view); m_InPortView = view; }
 	inline void SetOutPortView(OutPortView* view)		{ m_Views.push_back(view); m_OutPortView = view; }
 	inline void SetStandToolsView(StandToolsView* view) { m_Views.push_back(view); m_StandToolsView = view; }
-	inline void SetToolbarView(ToolbarView* view)		{ m_Views.push_back(view); m_Toolbar = view; }
+	inline void SetToolbarView(ControlView* view)		{ m_Views.push_back(view); m_ControlView = view; }
 
 	inline EditorView* GetEditorView() const { return m_EditorView; }
 	inline MemoryView* GetMemoryView() const { return m_MemoryView; }
@@ -44,6 +44,6 @@ private:
 	InPortView* m_InPortView = nullptr;
 	OutPortView* m_OutPortView = nullptr;
 	StandToolsView* m_StandToolsView = nullptr;
-	ToolbarView* m_Toolbar = nullptr;
+	ControlView* m_ControlView = nullptr;
 	std::vector<View*> m_Views;
 };
