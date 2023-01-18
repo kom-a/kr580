@@ -8,7 +8,7 @@
 
 #include <imgui/imgui_internal.h>
 
-#include "ViewManager.h"
+#include "views/ViewManager.h"
 
 #define SOURCE_CODE_FILE_FORMAT ".asm"
 #define MACHINE_CODE_FILE_FORMAT ".obj"

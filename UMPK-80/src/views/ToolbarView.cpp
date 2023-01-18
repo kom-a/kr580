@@ -2,7 +2,7 @@
 
 #include <sstream>
 
-#include "../ViewManager.h"
+#include "ViewManager.h"
 
 ToolbarView::ToolbarView()
 	: m_Compiler(),

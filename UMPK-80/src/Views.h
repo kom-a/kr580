@@ -1,8 +1,0 @@
-#include "views/MemoryView.h"
-#include "views/StackView.h"
-#include "views/EditorView.h"
-#include "views/RegistersView.h"
-#include "views/ToolbarView.h"
-#include "views/InPortView.h"
-#include "views/OutPortView.h"
-#include "views/StandToolsView.h"
