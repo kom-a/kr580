@@ -3,7 +3,7 @@
 #include <Emulator.h>
 
 #include "Window.h"
-#include "views/ViewManager.h"
+#include "view/ViewManager.h"
 
 void Melody1FunctionProc(KR580VM80A* emu)
 {
