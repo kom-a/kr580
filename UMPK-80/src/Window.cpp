@@ -6,6 +6,8 @@
 #include <imgui/backends/imgui_impl_glfw.h>
 #include <imgui/backends/imgui_impl_opengl3.h>
 
+#include <imgui/imgui_internal.h>
+
 #include "ViewsController.h"
 
 #define SOURCE_CODE_FILE_FORMAT ".asm"
@@ -129,32 +131,27 @@ void Window::InitImGuiStyle()
 	colors[ImGuiCol_DockingPreview] = ImVec4(0.35f, 0.35f, 0.35f, 0.70f);
 }
 
-void Window::Update()
+void Window::ImGuiNewFrame()
 {
-	glfwPollEvents();
+	ImGui_ImplOpenGL3_NewFrame();
+	ImGui_ImplGlfw_NewFrame();
+	ImGui::NewFrame();
+	ImGui::DockSpaceOverViewport();
+}
 
+void Window::ImGuiEndFrame()
+{
 	ImGui::Render();
 	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
 	ImGui::UpdatePlatformWindows();
 	ImGui::RenderPlatformWindowsDefault();
 	glfwMakeContextCurrent(m_GLFWWindow);
-
-	glfwSwapBuffers(m_GLFWWindow);
 }
 
-void Window::Render(KR580VM80A* emu)
+void Window::RenderMainMenubar(KR580VM80A* emu)
 {
-	ImGui_ImplOpenGL3_NewFrame();
-	ImGui_ImplGlfw_NewFrame();
-	ImGui::NewFrame();
-	ImGui::DockSpaceOverViewport();
-
 	ViewsController& views_controller = ViewsController::GetInstance();
-
-	static ImGuiAxis toolbar1_axis = ImGuiAxis_X; // Your storage for the current direction.
-
-#if 1
 
 	bool load_file = false, save_source_code = false, save_machine_code = false;
 
@@ -180,7 +177,7 @@ void Window::Render(KR580VM80A* emu)
 			ImGui::Separator();
 			if (ImGui::MenuItem("Save as *.asm"))
 			{
-				 save_source_code = true;
+				save_source_code = true;
 			}
 			if (ImGui::MenuItem("Save as *.obj"))
 			{
@@ -199,7 +196,7 @@ void Window::Render(KR580VM80A* emu)
 			bool can_undo = editor->CanUndo();
 			bool can_redo = editor->CanRedo();
 
-			if(!can_undo)
+			if (!can_undo)
 				ImGui::BeginDisabled();
 			if (ImGui::MenuItem("Undo", "Ctrl+Z"))
 			{
@@ -216,7 +213,7 @@ void Window::Render(KR580VM80A* emu)
 			}
 			if (!can_redo)
 				ImGui::EndDisabled();
-			
+
 			ImGui::Separator();
 
 			if (ImGui::MenuItem("Cut", "Ctrl+X"))
@@ -307,7 +304,7 @@ void Window::Render(KR580VM80A* emu)
 			: m_FileDialog.selected_path.append(SOURCE_CODE_FILE_FORMAT);
 
 		EditorView* editor_view = views_controller.GetEditorView();
-			
+
 		if (!editor_view->SaveToFile(save_filename))
 		{
 			// Log an error during source code saving to file
@@ -327,14 +324,32 @@ void Window::Render(KR580VM80A* emu)
 			// Log an error during machine code saving to file
 		}
 	}
+}
 
+void Window::RenderViews(KR580VM80A* emu)
+{
+	ViewsController& views_controller = ViewsController::GetInstance();
+	views_controller.Render(emu);
+}
 
+void Window::Update()
+{
+	glfwPollEvents();
+
+	ImGuiEndFrame();
+
+	glfwSwapBuffers(m_GLFWWindow);
+}
+
+void Window::Render(KR580VM80A* emu)
+{
+	ImGuiNewFrame();
+
+	RenderMainMenubar(emu);
+	RenderViews(emu);
 
 	ImGui::ShowDemoWindow();
 	ImGui::ShowMetricsWindow();
-
-	views_controller.Render(emu);
-#endif 
 }
 
 void GLFWErrorCallback(int error, const char* description)

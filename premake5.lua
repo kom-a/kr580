@@ -131,10 +131,12 @@ project "UMPK-80"
     { 
         "%{prj.name}/src/**.*",
         "%{prj.name}/vendor/imgui/imgui/*.*",
-        "%{prj.name}/vendor/glad/src/**.*",
         "%{prj.name}/vendor/imgui/imgui/backends/imgui_impl_glfw.*",
         "%{prj.name}/vendor/imgui/imgui/backends/imgui_impl_opengl3.*",
+        "%{prj.name}/vendor/glad/**.*",
+        "%{prj.name}/vendor/imgui/imgui_club/imgui_memory_editor/*.*",
         "%{prj.name}/vendor/imgui/ImGuiColorTextEdit/*.cpp",
+        "%{prj.name}/vendor/imgui/ImGuiColorTextEdit/*.h",
         "%{prj.name}/vendor/imgui/ImGui-Addons/FileBrowser/*.cpp",
     }
 

@@ -32,6 +32,11 @@ private:
 	bool Init();
 	void InitImGui();
 	void InitImGuiStyle();
+	void ImGuiNewFrame();
+	void ImGuiEndFrame();
+
+	void RenderMainMenubar(KR580VM80A* emu);
+	void RenderViews(KR580VM80A* emu);
 
 private:
 	GLFWwindow* m_GLFWWindow;

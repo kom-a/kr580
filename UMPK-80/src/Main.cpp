@@ -63,7 +63,7 @@ int main()
 	emu->SetBuiltInFunction(0x01E9, DecodeDisplayProc);
 
 	ViewsController& views_controller = ViewsController::GetInstance();
-	views_controller.SetToolbarView(new ControlView());
+	views_controller.SetToolbarView(new ToolbarView());
 	views_controller.SetEditorView(new EditorView());
 	views_controller.SetMemoryView(new MemoryView(emu->Memory + USER_MEMORY_OFFSET, USER_MEMORY_SIZE));
 	views_controller.SetStackView(new StackView());
