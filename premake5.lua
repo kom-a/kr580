@@ -138,6 +138,7 @@ project "UMPK-80"
         "%{prj.name}/vendor/imgui/ImGuiColorTextEdit/*.cpp",
         "%{prj.name}/vendor/imgui/ImGuiColorTextEdit/*.h",
         "%{prj.name}/vendor/imgui/ImGui-Addons/FileBrowser/*.cpp",
+        "%{prj.name}/vendor/stb/**.*",
     }
 
     includedirs

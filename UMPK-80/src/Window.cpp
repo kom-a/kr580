@@ -8,7 +8,7 @@
 
 #include <imgui/imgui_internal.h>
 
-#include "ViewsController.h"
+#include "ViewManager.h"
 
 #define SOURCE_CODE_FILE_FORMAT ".asm"
 #define MACHINE_CODE_FILE_FORMAT ".obj"
@@ -151,7 +151,7 @@ void Window::ImGuiEndFrame()
 
 void Window::RenderMainMenubar(KR580VM80A* emu)
 {
-	ViewsController& views_controller = ViewsController::GetInstance();
+	ViewManager& viewManager = ViewManager::GetInstance();
 
 	bool load_file = false, save_source_code = false, save_machine_code = false;
 
@@ -161,7 +161,7 @@ void Window::RenderMainMenubar(KR580VM80A* emu)
 		{
 			if (ImGui::MenuItem("New"))
 			{
-				EditorView* editor = views_controller.GetEditorView();
+				EditorView* editor = viewManager.GetEditorView();
 				TextEditor::ErrorMarkers no_errors;
 				std::string empty_source;
 
@@ -192,7 +192,7 @@ void Window::RenderMainMenubar(KR580VM80A* emu)
 		}
 		if (ImGui::BeginMenu("Edit"))
 		{
-			EditorView* editor = views_controller.GetEditorView();
+			EditorView* editor = viewManager.GetEditorView();
 			bool can_undo = editor->CanUndo();
 			bool can_redo = editor->CanRedo();
 
@@ -233,19 +233,19 @@ void Window::RenderMainMenubar(KR580VM80A* emu)
 		if (ImGui::BeginMenu("View"))
 		{
 			if (ImGui::MenuItem("Editor"))
-				views_controller.GetEditorView()->Open();
+				viewManager.GetEditorView()->Open();
 			if (ImGui::MenuItem("Memory"))
-				views_controller.GetMemoryView()->Open();
+				viewManager.GetMemoryView()->Open();
 			if (ImGui::MenuItem("Registers"))
-				views_controller.GetRegisterView()->Open();
+				viewManager.GetRegisterView()->Open();
 			if (ImGui::MenuItem("Stack"))
-				views_controller.GetStackView()->Open();
+				viewManager.GetStackView()->Open();
 			if (ImGui::MenuItem("In ports"))
-				views_controller.GetInPortsView()->Open();
+				viewManager.GetInPortsView()->Open();
 			if (ImGui::MenuItem("Out ports"))
-				views_controller.GetOutPortsView()->Open();
+				viewManager.GetOutPortsView()->Open();
 			if (ImGui::MenuItem("Stand tools"))
-				views_controller.GetStandToolsView()->Open();
+				viewManager.GetStandToolsView()->Open();
 
 			ImGui::Separator();
 
@@ -275,7 +275,7 @@ void Window::RenderMainMenubar(KR580VM80A* emu)
 	{
 		if (m_FileDialog.ext == SOURCE_CODE_FILE_FORMAT)
 		{
-			EditorView* editor_view = views_controller.GetEditorView();
+			EditorView* editor_view = viewManager.GetEditorView();
 
 			if (!editor_view->LoadFromFile(m_FileDialog.selected_path))
 			{
@@ -284,7 +284,7 @@ void Window::RenderMainMenubar(KR580VM80A* emu)
 		}
 		else if (m_FileDialog.ext == MACHINE_CODE_FILE_FORMAT)
 		{
-			MemoryView* memory_view = views_controller.GetMemoryView();
+			MemoryView* memory_view = viewManager.GetMemoryView();
 
 			if (!memory_view->LoadFromFile(m_FileDialog.selected_path))
 			{
@@ -303,7 +303,7 @@ void Window::RenderMainMenubar(KR580VM80A* emu)
 			? m_FileDialog.selected_path
 			: m_FileDialog.selected_path.append(SOURCE_CODE_FILE_FORMAT);
 
-		EditorView* editor_view = views_controller.GetEditorView();
+		EditorView* editor_view = viewManager.GetEditorView();
 
 		if (!editor_view->SaveToFile(save_filename))
 		{
@@ -317,7 +317,7 @@ void Window::RenderMainMenubar(KR580VM80A* emu)
 			? m_FileDialog.selected_path
 			: m_FileDialog.selected_path.append(MACHINE_CODE_FILE_FORMAT);
 
-		MemoryView* memory_view = views_controller.GetMemoryView();
+		MemoryView* memory_view = viewManager.GetMemoryView();
 
 		if (!memory_view->SaveToFile(save_filename))
 		{
@@ -328,8 +328,8 @@ void Window::RenderMainMenubar(KR580VM80A* emu)
 
 void Window::RenderViews(KR580VM80A* emu)
 {
-	ViewsController& views_controller = ViewsController::GetInstance();
-	views_controller.Render(emu);
+	ViewManager& viewManager = ViewManager::GetInstance();
+	viewManager.Render(emu);
 }
 
 void Window::Update()

@@ -3,7 +3,7 @@
 #include <Emulator.h>
 
 #include "Window.h"
-#include "ViewsController.h"
+#include "ViewManager.h"
 
 void Melody1FunctionProc(KR580VM80A* emu)
 {
@@ -17,8 +17,8 @@ void Melody2FunctionProc(KR580VM80A* emu)
 
 void DisplayProc(KR580VM80A* emu)
 {
-	ViewsController& views_controller = ViewsController::GetInstance();
-	StandToolsView* stand_tools = views_controller.GetStandToolsView();
+	ViewManager& viewManager = ViewManager::GetInstance();
+	StandToolsView* stand_tools = viewManager.GetStandToolsView();
 
 	stand_tools->Display(&emu->Memory[0x0BFA]);
 }
@@ -62,15 +62,15 @@ int main()
 	emu->SetBuiltInFunction(0x01C8, DisplayProc);
 	emu->SetBuiltInFunction(0x01E9, DecodeDisplayProc);
 
-	ViewsController& views_controller = ViewsController::GetInstance();
-	views_controller.SetToolbarView(new ToolbarView());
-	views_controller.SetEditorView(new EditorView());
-	views_controller.SetMemoryView(new MemoryView(emu->Memory + USER_MEMORY_OFFSET, USER_MEMORY_SIZE));
-	views_controller.SetStackView(new StackView());
-	views_controller.SetRegistersView(new RegistersView());
-	views_controller.SetInPortView(new InPortView());
-	views_controller.SetOutPortView(new OutPortView());
-	views_controller.SetStandToolsView(new StandToolsView());
+	ViewManager& viewManager = ViewManager::GetInstance();
+	viewManager.SetToolbarView(new ToolbarView());
+	viewManager.SetEditorView(new EditorView());
+	viewManager.SetMemoryView(new MemoryView(emu->Memory + USER_MEMORY_OFFSET, USER_MEMORY_SIZE));
+	viewManager.SetStackView(new StackView());
+	viewManager.SetRegistersView(new RegistersView());
+	viewManager.SetInPortView(new InPortView());
+	viewManager.SetOutPortView(new OutPortView());
+	viewManager.SetStandToolsView(new StandToolsView());
 
 	while (!window->Closed())
 	{

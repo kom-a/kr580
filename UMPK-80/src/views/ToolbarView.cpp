@@ -2,7 +2,7 @@
 
 #include <sstream>
 
-#include "../ViewsController.h"
+#include "../ViewManager.h"
 
 ToolbarView::ToolbarView()
 	: m_Compiler(),
@@ -24,13 +24,13 @@ void ToolbarView::Render(KR580VM80A* emu)
 	ImGuiStyle style = ImGui::GetStyle();
 	float height = ImGui::GetFrameHeight() + style.FramePadding.y;
 
-	ViewsController& viewsController = ViewsController::GetInstance();
+	ViewManager& viewManager = ViewManager::GetInstance();
 
 	if (ImGui::BeginViewportSideBar("##SecondaryMenuBar", viewport, ImGuiDir_Up, height, windowFlags)) {
 		if (ImGui::BeginMenuBar()) {
 			if (ImGui::Button("Assemble"))
 			{
-				EditorView* editor = viewsController.GetEditorView();
+				EditorView* editor = viewManager.GetEditorView();
 				std::string source = editor->GetText();
 				const int offset = 0x0800; // NOTE: hardcode this only for now
 
@@ -68,7 +68,7 @@ void ToolbarView::Render(KR580VM80A* emu)
 					std::stringstream source;
 					for (auto& line : m_Disassembler.mnemonics)
 						source << line;
-					viewsController.GetEditorView()->SetText(source.str());
+					viewManager.GetEditorView()->SetText(source.str());
 				}
 				else
 				{
@@ -76,7 +76,7 @@ void ToolbarView::Render(KR580VM80A* emu)
 					const std::string& error_message = std::get<1>(m_Disassembler.disassembleError.message);
 					std::string message = error_message + "at address \'0x" + error_line + "\'";
 
-					viewsController.GetEditorView()->SetText(message);
+					viewManager.GetEditorView()->SetText(message);
 				}
 			}
 
@@ -108,13 +108,13 @@ void ToolbarView::Render(KR580VM80A* emu)
 	}
 #else
 
-	ViewsController& viewsController = ViewsController::GetInstance();
+	ViewsController& viewManager = ViewsController::GetInstance();
 
 	ImGui::Begin("Contorl");
 
 	if (ImGui::Button("Assemble"))
 	{
-		EditorView* editor = viewsController.GetEditorView();
+		EditorView* editor = viewManager.GetEditorView();
 		std::string source = editor->GetText();
 		const int offset = 0x0800; // NOTE: hardcode this only for now
 
@@ -152,7 +152,7 @@ void ToolbarView::Render(KR580VM80A* emu)
 			std::stringstream source;
 			for (auto& line : m_Disassembler.mnemonics)
 				source << line;
-			viewsController.GetEditorView()->SetText(source.str());
+			viewManager.GetEditorView()->SetText(source.str());
 		}
 		else
 		{
@@ -160,7 +160,7 @@ void ToolbarView::Render(KR580VM80A* emu)
 			const std::string& error_message = std::get<1>(m_Disassembler.disassembleError.message);
 			std::string message = error_message + "at address \'0x" + error_line + "\'";
 
-			viewsController.GetEditorView()->SetText(message);
+			viewManager.GetEditorView()->SetText(message);
 		}
 	}
 	
