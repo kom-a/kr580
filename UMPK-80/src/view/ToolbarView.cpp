@@ -3,7 +3,6 @@
 #include <sstream>
 
 #include "ViewManager.h"
-#include "resource/texture/TextureManager.h"
 
 #include "IconsFontAwesome4.h"
 #include "IconsFontAwesome5.h"
