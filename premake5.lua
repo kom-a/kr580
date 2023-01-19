@@ -138,6 +138,7 @@ project "UMPK-80"
         "%{prj.name}/vendor/imgui/ImGuiColorTextEdit/*.cpp",
         "%{prj.name}/vendor/imgui/ImGuiColorTextEdit/*.h",
         "%{prj.name}/vendor/imgui/ImGui-Addons/FileBrowser/*.cpp",
+        "%{prj.name}/vendor/IconsFontAwesome/*.h",
         "%{prj.name}/vendor/stb/**.*",
     }
 
@@ -153,7 +154,7 @@ project "UMPK-80"
         "%{prj.name}/vendor/glad/include",
         "%{prj.name}/vendor/GLFW/include",
         "%{prj.name}/vendor/stb/",
-        "%{prj.name}/vendor/IconsFontAwesome/"
+        "%{prj.name}/vendor/IconsFontAwesome/",
     }
 
     links
