@@ -8,7 +8,8 @@
 
 #include <imgui/imgui_internal.h>
 
-#include "views/ViewManager.h"
+#include "view/ViewManager.h"
+#include "IconsFontAwesome6.h"
 
 #define SOURCE_CODE_FILE_FORMAT ".asm"
 #define MACHINE_CODE_FILE_FORMAT ".obj"
@@ -80,10 +81,17 @@ void Window::InitImGui()
 	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
 	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
 	io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
-	//io.ConfigViewportsNoAutoMerge = true;
-	//io.ConfigViewportsNoTaskBarIcon = true;
-	auto font = io.Fonts->AddFontFromFileTTF("res/RobotoMono-Bold.ttf", 18, 0, io.Fonts->GetGlyphRangesCyrillic());
-	io.FontDefault = font;
+	
+	io.Fonts->AddFontDefault();
+
+	const float fontSize = 12.0f;
+	ImFontConfig config;
+	config.MergeMode = true;
+	config.GlyphMinAdvanceX = fontSize; // Use if you want to make the icon monospaced
+	static const ImWchar icon_ranges[] = { ICON_MIN_FA, ICON_MAX_FA, 0 };
+
+	ImGui::GetIO().Fonts->AddFontDefault();
+	io.FontDefault =  io.Fonts->AddFontFromFileTTF("res/Font Awesome 6 Free-Solid-900.otf", fontSize, &config, icon_ranges);
 
 	InitImGuiStyle();
 

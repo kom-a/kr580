@@ -145,12 +145,15 @@ project "UMPK-80"
     {
         "Compiler",
         "Emulator",
+        "%{prj.name}/src",
         "%{prj.name}/vendor/imgui",
         "%{prj.name}/vendor/imgui/imgui",
         "%{prj.name}/vendor/imgui/imgui/backends",
         "%{prj.name}/vendor/imgui/ImGui-Addons/FileBrowser",
         "%{prj.name}/vendor/glad/include",
         "%{prj.name}/vendor/GLFW/include",
+        "%{prj.name}/vendor/stb/",
+        "%{prj.name}/vendor/IconsFontAwesome/"
     }
 
     links

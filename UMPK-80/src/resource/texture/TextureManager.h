@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Texture2D.h"
+
 class TextureManager
 {
 public:
@@ -14,16 +16,10 @@ public:
 	void operator=(const TextureManager&) = delete;
 
 public:
-	
-	
-private:
+	static void Init();
 
-	EditorView* m_EditorView = nullptr;
-	MemoryView* m_MemoryView = nullptr;
-	RegistersView* m_RegistersView = nullptr;
-	StackView* m_StackView = nullptr;
-	InPortView* m_InPortView = nullptr;
-	OutPortView* m_OutPortView = nullptr;
-	StandToolsView* m_StandToolsView = nullptr;
-	ToolbarView* m_ToolbarView = nullptr;
+public:
+	static Texture2D* Empty;
+	static Texture2D* Assemble;
+	static Texture2D* Disassemble;
 };

@@ -4,6 +4,7 @@
 
 #include "Window.h"
 #include "view/ViewManager.h"
+#include "resource/texture/TextureManager.h"
 
 void Melody1FunctionProc(KR580VM80A* emu)
 {
@@ -62,6 +63,8 @@ int main()
 	emu->SetBuiltInFunction(0x01C8, DisplayProc);
 	emu->SetBuiltInFunction(0x01E9, DecodeDisplayProc);
 
+	TextureManager::Init();
+
 	ViewManager& viewManager = ViewManager::GetInstance();
 	viewManager.SetToolbarView(new ToolbarView());
 	viewManager.SetEditorView(new EditorView());
@@ -81,7 +84,7 @@ int main()
 		window->Update();
 	}
 
-	// delete window;
-	// delete emu;
+	 delete window;
+	 delete emu;
 	return 0;
 }

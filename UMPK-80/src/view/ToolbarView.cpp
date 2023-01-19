@@ -3,6 +3,11 @@
 #include <sstream>
 
 #include "ViewManager.h"
+#include "resource/texture/TextureManager.h"
+
+#include "IconsFontAwesome4.h"
+#include "IconsFontAwesome5.h"
+#include "IconsFontAwesome6.h"
 
 ToolbarView::ToolbarView()
 	: m_Compiler(),
@@ -28,7 +33,7 @@ void ToolbarView::Render(KR580VM80A* emu)
 
 	if (ImGui::BeginViewportSideBar("##SecondaryMenuBar", viewport, ImGuiDir_Up, height, windowFlags)) {
 		if (ImGui::BeginMenuBar()) {
-			if (ImGui::Button("Assemble"))
+			if (ImGui::Button(ICON_FA_HAMMER " Assemble"))
 			{
 				EditorView* editor = viewManager.GetEditorView();
 				std::string source = editor->GetText();
@@ -57,7 +62,7 @@ void ToolbarView::Render(KR580VM80A* emu)
 				editor->SetErrors(compile_errors);
 			}
 
-			if (ImGui::Button("Disassemble"))
+			if (ImGui::Button(ICON_FA_CODE " Disassemble"))
 			{
 				uint8_t* user_memory = &emu->Memory[USER_MEMORY_OFFSET];
 				std::vector<uint8_t> machine_code = std::vector<uint8_t>(user_memory, user_memory + USER_MEMORY_SIZE);
@@ -80,22 +85,22 @@ void ToolbarView::Render(KR580VM80A* emu)
 				}
 			}
 
-			if (ImGui::Button("Step"))
+			if (ImGui::Button(ICON_FA_STEP_FORWARD " Step"))
 			{
 				emu->Step();
 			}
 
-			if (ImGui::Button("Run"))
+			if (ImGui::Button(ICON_FA_RUNNING " Run"))
 			{
 				emu->Running = true;
 			}
 
-			if (ImGui::Button("Stop"))
+			if (ImGui::Button( ICON_FA_STOP " Stop"))
 			{
 				emu->Running = false;
 			}
 
-			if (ImGui::Button("Reset"))
+			if (ImGui::Button(ICON_FA_REFRESH " Reset"))
 			{
 				emu->PC = USER_MEMORY_OFFSET;
 				emu->SP = STACK_OFFSET + STACK_SIZE;
