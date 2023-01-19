@@ -82,16 +82,13 @@ void Window::InitImGui()
 	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
 	io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
 	
-	io.Fonts->AddFontDefault();
+	const float fontSize = 18.0f;
+	io.Fonts->AddFontFromFileTTF("res/RobotoMono-Bold.ttf", fontSize, nullptr, io.Fonts->GetGlyphRangesCyrillic());
 
-	const float fontSize = 12.0f;
+	static const ImWchar icons_ranges[] = { ICON_MIN_FA, ICON_MAX_FA, 0 }; // will not be copied by AddFont* so keep in scope.
 	ImFontConfig config;
 	config.MergeMode = true;
-	config.GlyphMinAdvanceX = fontSize; // Use if you want to make the icon monospaced
-	static const ImWchar icon_ranges[] = { ICON_MIN_FA, ICON_MAX_FA, 0 };
-
-	ImGui::GetIO().Fonts->AddFontDefault();
-	io.FontDefault =  io.Fonts->AddFontFromFileTTF("res/Font Awesome 6 Free-Solid-900.otf", fontSize, &config, icon_ranges);
+	io.Fonts->AddFontFromFileTTF("res/Font Awesome 6 Free-Solid-900.otf", fontSize * 0.9f, &config, icons_ranges);
 
 	InitImGuiStyle();
 
