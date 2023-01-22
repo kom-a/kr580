@@ -1,5 +1,6 @@
+#include <KR580.h>
+
 #include "Disassembler/Disassembler.h"
-#include "Emulator.h"
 #include <sstream>
 #include <iomanip>
 #include "ErrorHandler/DisassemblerErrorHandler.h"

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Emulator.h"
+#include <KR580.h>
 
 class View
 {
