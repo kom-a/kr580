@@ -9,7 +9,7 @@
 #include <imgui/imgui_internal.h>
 
 #include "view/ViewManager.h"
-#include "IconsFontAwesome6.h"
+#include "Icons.h"
 
 #define SOURCE_CODE_FILE_FORMAT ".asm"
 #define MACHINE_CODE_FILE_FORMAT ".obj"

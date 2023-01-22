@@ -4,9 +4,7 @@
 
 #include "ViewManager.h"
 
-#include "IconsFontAwesome4.h"
-#include "IconsFontAwesome5.h"
-#include "IconsFontAwesome6.h"
+#include "Icons.h"
 
 ToolbarView::ToolbarView()
 	: m_Compiler(),

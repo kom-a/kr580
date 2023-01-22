@@ -5,8 +5,8 @@ workspace "kr580"
 
 outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 
-project "Emulator"
-    location "Emulator"
+project "KR580"
+    location "KR580"
     kind "StaticLib"
     language "C++"
 
@@ -60,7 +60,7 @@ project "Compiler"
     includedirs
     {
         "%{prj.name}/src",
-        "Emulator/"
+        "KR580/"
     }
 
     filter "configurations:Debug"
@@ -145,7 +145,7 @@ project "UMPK-80"
     includedirs
     {
         "Compiler",
-        "Emulator",
+        "KR580",
         "%{prj.name}/src",
         "%{prj.name}/vendor/imgui",
         "%{prj.name}/vendor/imgui/imgui",
@@ -155,12 +155,13 @@ project "UMPK-80"
         "%{prj.name}/vendor/GLFW/include",
         "%{prj.name}/vendor/stb/",
         "%{prj.name}/vendor/IconsFontAwesome/",
+        "%{prj.name}/vendor/spdlog/include/"
     }
 
     links
     {
         "GLFW",
-        "Emulator"
+        "KR580"
     }
 
     filter "configurations:Debug"

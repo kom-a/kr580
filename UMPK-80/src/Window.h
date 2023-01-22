@@ -9,7 +9,7 @@
 #include <imgui/imgui.h>
 #include <ImGuiFileBrowser.h>
 
-#include "Emulator.h"
+#include <KR580.h>
 
 class Window
 {
