@@ -19,7 +19,7 @@ public:
 
 public:
 	void Update();
-	void Render(KR580VM80A* emu);
+	void Render(KR580::KR580VM80A* emu);
 
 public:
 	inline bool Closed() const { return glfwWindowShouldClose(m_GLFWWindow); }
@@ -35,8 +35,8 @@ private:
 	void ImGuiNewFrame();
 	void ImGuiEndFrame();
 
-	void RenderMainMenubar(KR580VM80A* emu);
-	void RenderViews(KR580VM80A* emu);
+	void RenderMainMenubar(KR580::KR580VM80A* emu);
+	void RenderViews(KR580::KR580VM80A* emu);
 
 private:
 	GLFWwindow* m_GLFWWindow;

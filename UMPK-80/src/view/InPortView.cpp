@@ -19,7 +19,7 @@ void InPortView::Render(KR580VM80A* emu)
 
 	ImGui::Begin("In ports", &m_Open);
 
-	m_Editor.DrawContents(emu->In, PORTS_SIZE);
+	m_Editor.DrawContents(emu->In, KR580VM80A::PORTS_SIZE);
 
 	ImGui::End();
 }

@@ -15,3 +15,6 @@
 [submodule "UMPK-80/vendor/imgui/ImGui-Addons"]
 	path = UMPK-80/vendor/imgui/ImGui-Addons
 	url = https://github.com/gallickgunner/ImGui-Addons.git
+[submodule "UMPK-80/vendor/spdlog"]
+	path = UMPK-80/vendor/spdlog
+	url = https://github.com/gabime/spdlog.git

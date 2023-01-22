@@ -6,6 +6,8 @@
 #include "ErrorHandler/DisassemblerErrorHandler.h"
 #include "Command/Command.h"
 
+using namespace KR580;
+
 OpcodeInfo_t getArgInfo(uint8_t opcode)
 {
 	if (OpcodeInfo.find((Opcode)opcode) != OpcodeInfo.end())

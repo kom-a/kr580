@@ -15,6 +15,8 @@
 #define MACHINE_CODE_FILE_FORMAT ".obj"
 #define FILE_FORMATS (SOURCE_CODE_FILE_FORMAT "," MACHINE_CODE_FILE_FORMAT)
 
+using namespace KR580;
+
 void GLFWErrorCallback(int error, const char* description);
 void GLFWWindowResizeCallback(GLFWwindow* window, int width, int height);
 

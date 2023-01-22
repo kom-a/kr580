@@ -12,8 +12,8 @@ public:
 
 	void Render(KR580VM80A* emu);
 private:
-	void DrawRegister(const char* label, WORD& reg);
-	void DrawRegisterPair(const char* label, DWORD& reg);
+	void DrawRegister(const char* label, KR580VM80A::WORD& reg);
+	void DrawRegisterPair(const char* label, KR580VM80A::DWORD& reg);
 
 	struct State
 	{

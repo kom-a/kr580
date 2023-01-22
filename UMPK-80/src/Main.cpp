@@ -24,7 +24,7 @@ void DisplayProc(KR580VM80A* emu)
 	stand_tools->Display(&emu->Memory[0x0BFA]);
 }
 
-WORD GetDisplayRepresentation(WORD value)
+KR580VM80A::WORD GetDisplayRepresentation(KR580VM80A::WORD value)
 {
 	switch (value)
 	{
@@ -56,7 +56,7 @@ void DecodeDisplayProc(KR580VM80A* emu)
 int main()
 {
 	/*Log::Init();
-	LOG_INFO("Logger inited");*/
+	LOG_INFO("Logger");*/
 
 	Window* window = new Window(1280 / 1.5f, 720 / 1.5f, "UMPK-80");
 	KR580VM80A* emu = new KR580VM80A();
@@ -69,7 +69,7 @@ int main()
 	ViewManager& viewManager = ViewManager::GetInstance();
 	viewManager.SetToolbarView(new ToolbarView());
 	viewManager.SetEditorView(new EditorView());
-	viewManager.SetMemoryView(new MemoryView(emu->Memory + USER_MEMORY_OFFSET, USER_MEMORY_SIZE));
+	viewManager.SetMemoryView(new MemoryView(emu->Memory + KR580VM80A::USER_MEMORY_OFFSET, KR580VM80A::USER_MEMORY_SIZE));
 	viewManager.SetStackView(new StackView());
 	viewManager.SetRegistersView(new RegistersView());
 	viewManager.SetInPortView(new InPortView());

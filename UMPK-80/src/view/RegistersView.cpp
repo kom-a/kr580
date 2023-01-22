@@ -45,7 +45,7 @@ void RegistersView::Render(KR580VM80A* emu)
 	ImGui::End();
 }
 
-void RegistersView::DrawRegister(const char* label, WORD& reg)
+void RegistersView::DrawRegister(const char* label, KR580VM80A::WORD& reg)
 {
 	ImGui::Text(label);
 	ImGui::SameLine();
@@ -118,7 +118,7 @@ void RegistersView::DrawRegister(const char* label, WORD& reg)
 	}
 }
 
-void RegistersView::DrawRegisterPair(const char* label, DWORD& reg)
+void RegistersView::DrawRegisterPair(const char* label, KR580VM80A::DWORD& reg)
 {
 	ImGui::Text(label);
 	ImGui::SameLine();
