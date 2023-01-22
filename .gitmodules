@@ -18,3 +18,4 @@
 [submodule "UMPK-80/vendor/spdlog"]
 	path = UMPK-80/vendor/spdlog
 	url = https://github.com/gabime/spdlog.git
+	branch = v1.x
