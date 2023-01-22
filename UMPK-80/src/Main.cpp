@@ -2,6 +2,7 @@
 
 #include <KR580.h>
 
+#include "Log.h"
 #include "Window.h"
 #include "view/ViewManager.h"
 
@@ -55,8 +56,8 @@ void DecodeDisplayProc(KR580VM80A* emu)
 
 int main()
 {
-	/*Log::Init();
-	LOG_INFO("Logger");*/
+	Log::Init();
+	LOG_INFO("Logger");
 
 	Window* window = new Window(1280 / 1.5f, 720 / 1.5f, "UMPK-80");
 	KR580VM80A* emu = new KR580VM80A();
