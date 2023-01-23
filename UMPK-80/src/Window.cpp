@@ -361,27 +361,37 @@ void Window::RenderSettingsModal(KR580::KR580VM80A* emu)
 	{
 		Settings& settings = Settings::Get();
 
-		ImGui::Text("Load at PC: ");
-		ImGui::SameLine();
-		ImGui::Checkbox("##loadAtPC", &settings.LoadAtProgramCounter);
+		{
+			ImGui::Text("Load at PC: ");
+			ImGui::SameLine();
+			ImGui::Checkbox("##loadAtPC", &settings.LoadAtProgramCounter);
 
-		ImGui::BeginDisabled(settings.LoadAtProgramCounter);
+			ImGui::BeginDisabled(settings.LoadAtProgramCounter);
 
-		const char* load_address_label = "Load address: ";
-		const std::string load_address_label_placeholader = std::string("").append(strlen(load_address_label), ' ');
+			const char* load_address_label = "Load address: ";
+			const std::string load_address_label_placeholader = std::string("").append(strlen(load_address_label), ' ');
 
-		ImGui::Text(load_address_label);
-		ImGui::SameLine();
+			ImGui::Text(load_address_label);
+			ImGui::SameLine();
 
-		ImGui::BeginDisabled();
-		ImGui::DragInt("##loadAddress", &settings.LoadAddress, 1.0f, 0, 0, "0x%04x");
-		ImGui::EndDisabled();
+			ImGui::BeginDisabled();
+			ImGui::DragInt("##loadAddress", &settings.LoadAddress, 1.0f, 0, 0, "0x%04x");
+			ImGui::EndDisabled();
 
-		ImGui::Text(load_address_label_placeholader.c_str());
-		ImGui::SameLine();
-		ImGui::SliderInt("##loadAddressSlider", &settings.LoadAddress, KR580VM80A::USER_MEMORY_OFFSET, KR580VM80A::USER_MEMORY_OFFSET + KR580VM80A::USER_MEMORY_SIZE, "");
+			ImGui::Text(load_address_label_placeholader.c_str());
+			ImGui::SameLine();
+			ImGui::SliderInt("##loadAddressSlider", &settings.LoadAddress, KR580VM80A::USER_MEMORY_OFFSET, KR580VM80A::USER_MEMORY_OFFSET + KR580VM80A::USER_MEMORY_SIZE, "");
 
-		ImGui::EndDisabled();
+			ImGui::EndDisabled();
+		}
+		
+		ImGui::Separator();
+
+		{
+			ImGui::Text("Font scale: ");
+			ImGui::SameLine();
+			ImGui::DragFloat("Font scale", &ImGui::GetIO().FontGlobalScale, 0.005f, 0.3f, 2.0f, "%.1f");
+		}
 
 		if (ImGui::Button("OK", ImVec2(120, 0))) { ImGui::CloseCurrentPopup(); }
 		ImGui::SetItemDefaultFocus();
