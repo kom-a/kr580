@@ -2,7 +2,6 @@
 
 #include "View.h"
 
-#include <imgui/imgui.h>
 #include <imgui_club/imgui_memory_editor/imgui_memory_editor.h>
 
 class StackView : public View

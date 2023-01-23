@@ -1,5 +1,7 @@
 #include "RegistersView.h"
 
+#include <imgui/imgui.h>
+
 RegistersView::RegistersView()
 {
 	m_State.DataEditingAddr = nullptr;

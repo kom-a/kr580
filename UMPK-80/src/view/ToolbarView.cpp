@@ -1,10 +1,11 @@
 #include "ToolbarView.h"
 
+#include <imgui/imgui.h>
+#include <imgui/imgui_internal.h>
 #include <sstream>
 
 #include "ViewManager.h"
 #include "Settings.h"
-
 #include "Icons.h"
 
 ToolbarView::ToolbarView()

@@ -2,8 +2,6 @@
 
 #include "View.h"
 
-#include <imgui/imgui.h>
-
 class RegistersView : public View
 {
 public:
