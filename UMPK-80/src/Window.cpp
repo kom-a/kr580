@@ -10,6 +10,7 @@
 
 #include "view/ViewManager.h"
 #include "Icons.h"
+#include "Settings.h"
 
 #define SOURCE_CODE_FILE_FORMAT ".asm"
 #define MACHINE_CODE_FILE_FORMAT ".obj"
@@ -83,7 +84,7 @@ void Window::InitImGui()
 	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
 	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
 	io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
-	
+
 	const float fontSize = 18.0f;
 	io.Fonts->AddFontFromFileTTF("res/RobotoMono-Bold.ttf", fontSize, nullptr, io.Fonts->GetGlyphRangesCyrillic());
 
@@ -161,6 +162,7 @@ void Window::RenderMainMenubar(KR580VM80A* emu)
 	ViewManager& viewManager = ViewManager::GetInstance();
 
 	bool load_file = false, save_source_code = false, save_machine_code = false;
+	bool showSettingsModal = false;
 
 	if (ImGui::BeginMainMenuBar())
 	{
@@ -216,7 +218,7 @@ void Window::RenderMainMenubar(KR580VM80A* emu)
 				ImGui::BeginDisabled();
 			if (ImGui::MenuItem("Redo", "Ctrl+Y"))
 			{
-
+				editor->Redo();
 			}
 			if (!can_redo)
 				ImGui::EndDisabled();
@@ -258,7 +260,14 @@ void Window::RenderMainMenubar(KR580VM80A* emu)
 
 			ImGui::EndMenu();
 		}
+		if (ImGui::BeginMenu("Tools"))
+		{
+			if (ImGui::MenuItem("Settings..."))
+				showSettingsModal = true;
 
+
+			ImGui::EndMenu();
+		}
 		if (ImGui::BeginMenu("Help"))
 		{
 			if (ImGui::MenuItem("Built-in"))
@@ -277,6 +286,8 @@ void Window::RenderMainMenubar(KR580VM80A* emu)
 		ImGui::OpenPopup("Save File#sourcecode");
 	if (save_machine_code)
 		ImGui::OpenPopup("Save File#machinecode");
+	if (showSettingsModal)
+		ImGui::OpenPopup("Settings");
 
 	if (m_FileDialog.showFileDialog("Open File", imgui_addons::ImGuiFileBrowser::DialogMode::OPEN, ImVec2(0, 0), FILE_FORMATS))
 	{
@@ -331,12 +342,51 @@ void Window::RenderMainMenubar(KR580VM80A* emu)
 			// Log an error during machine code saving to file
 		}
 	}
+
+	RenderSettingsModal(emu);
 }
 
 void Window::RenderViews(KR580VM80A* emu)
 {
 	ViewManager& viewManager = ViewManager::GetInstance();
 	viewManager.Render(emu);
+}
+
+void Window::RenderSettingsModal(KR580::KR580VM80A* emu)
+{
+	ImVec2 center = ImGui::GetMainViewport()->GetCenter();
+	ImGui::SetNextWindowPos(center, ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
+
+	if (ImGui::BeginPopupModal("Settings", NULL, ImGuiWindowFlags_AlwaysAutoResize))
+	{
+		Settings& settings = Settings::Get();
+
+		ImGui::Text("Load at PC: ");
+		ImGui::SameLine();
+		ImGui::Checkbox("##loadAtPC", &settings.LoadAtProgramCounter);
+
+		ImGui::BeginDisabled(settings.LoadAtProgramCounter);
+
+		const char* load_address_label = "Load address: ";
+		const std::string load_address_label_placeholader = std::string("").append(strlen(load_address_label), ' ');
+
+		ImGui::Text(load_address_label);
+		ImGui::SameLine();
+
+		ImGui::BeginDisabled();
+		ImGui::DragInt("##loadAddress", &settings.LoadAddress, 1.0f, 0, 0, "0x%04x");
+		ImGui::EndDisabled();
+
+		ImGui::Text(load_address_label_placeholader.c_str());
+		ImGui::SameLine();
+		ImGui::SliderInt("##loadAddressSlider", &settings.LoadAddress, KR580VM80A::USER_MEMORY_OFFSET, KR580VM80A::USER_MEMORY_OFFSET + KR580VM80A::USER_MEMORY_SIZE, "");
+
+		ImGui::EndDisabled();
+
+		if (ImGui::Button("OK", ImVec2(120, 0))) { ImGui::CloseCurrentPopup(); }
+		ImGui::SetItemDefaultFocus();
+		ImGui::EndPopup();
+	}
 }
 
 void Window::Update()

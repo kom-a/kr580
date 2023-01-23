@@ -5,6 +5,7 @@
 #include "Log.h"
 #include "Window.h"
 #include "view/ViewManager.h"
+#include "Settings.h"
 
 
 void Melody1FunctionProc(KR580VM80A* emu)
@@ -59,7 +60,7 @@ int main()
 	Log::Init();
 	LOG_INFO("Logger");
 
-	Window* window = new Window(1280 / 1.5f, 720 / 1.5f, "UMPK-80");
+	Window* window = new Window(1280, 720, "UMPK-80");
 	KR580VM80A* emu = new KR580VM80A();
 
 	emu->SetBuiltInFunction(0x05B0, Melody1FunctionProc);
@@ -83,6 +84,9 @@ int main()
 			emu->Step();
 
 		window->Render(emu);
+
+		
+
 		window->Update();
 	}
 

@@ -3,6 +3,7 @@
 #include <sstream>
 
 #include "ViewManager.h"
+#include "Settings.h"
 
 #include "Icons.h"
 
@@ -33,15 +34,15 @@ void ToolbarView::Render(KR580VM80A* emu)
 			{
 				EditorView* editor = viewManager.GetEditorView();
 				std::string source = editor->GetText();
-				const int offset = 0x0800; // NOTE: hardcode this only for now
+				const int load_address = Settings::Get().LoadAtProgramCounter ? emu->PC : Settings::Get().LoadAddress;
 
-				m_Compiler.Compile(source, offset);
+				m_Compiler.Compile(source, load_address);
 
 				TextEditor::ErrorMarkers compile_errors;
 				if (!m_Compiler.errorOccured)
 				{
 					std::vector<uint8_t>& program = m_Compiler.resultBinary;
-					emu->LoadProgram(program, offset);
+					emu->LoadProgram(program, load_address);
 				}
 				else
 				{

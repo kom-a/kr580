@@ -37,6 +37,7 @@ private:
 
 	void RenderMainMenubar(KR580::KR580VM80A* emu);
 	void RenderViews(KR580::KR580VM80A* emu);
+	void RenderSettingsModal(KR580::KR580VM80A* emu);
 
 private:
 	GLFWwindow* m_GLFWWindow;
