@@ -1,6 +1,8 @@
 # kr580
 KR580 emulator
 
+![Demo](./Res/Demo.png)
+
 ## Getting started
 ### **1. Downloading the repository:**
 Start by cloning the repository with `git clone --recursive https://github.com/kom-a/kr580`.
