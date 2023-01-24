@@ -150,6 +150,24 @@ void StandToolsView::Render(KR580VM80A* emu)
 	}
 	BitsToPort(emu->In[0x05], m_InPort5);
 
+	ImGui::Separator();
+
+	//const int rows = 5;
+	//const int columns = 7;
+	//if (ImGui::BeginTable("keyboardTable", 7))
+	//{
+	//	for (int row = 0; row < rows; row++)
+	//	{
+	//		ImGui::TableNextRow();
+	//		for (int column = 0; column < columns; column++)
+	//		{
+	//			ImGui::TableSetColumnIndex(column);
+	//			ImGui::Button("BUtton");
+	//		}
+	//	}
+	//	ImGui::EndTable();
+	//}
+
 	ImGui::End();
 }
 
