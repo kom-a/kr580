@@ -1,7 +1,10 @@
 #include <iostream>
 #include <assert.h>
+#include <string>
+#include <sstream>
 #include "KR580VM80A.h"
 
+#include "Log.h"
 #include "ISA.h"
 
 #define PAIR(high, low) (((DWORD)high << 8) | low)
@@ -1491,9 +1494,12 @@ namespace KR580
 		} break;
 		default:
 		{
-			// TODO: log this correctly
-			std::cout << "Undefined opcode \'0x" << std::hex << (int)opcode << std::dec << "\'" << std::endl;
-			assert(false, "Undefined opcode");
+			PC--;
+			Running = false;
+
+			std::stringstream ss;
+			ss << "Undefined opcode \'0x" << std::hex << (int)opcode << std::dec << "\'";
+			LOG_ERROR("{0}", ss.str());
 		}
 		}
 	}

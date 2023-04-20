@@ -57,8 +57,8 @@ void DecodeDisplayProc(KR580VM80A* emu)
 
 int main()
 {
+	KR580::Init();
 	Log::Init();
-	LOG_INFO("Logger");
 
 	Window* window = new Window(1280, 720, "UMPK-80");
 	KR580VM80A* emu = new KR580VM80A();

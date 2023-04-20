@@ -16,13 +16,15 @@ project "KR580"
     files 
     { 
         "%{prj.name}/src/**.*",
-        "%{prj.name}/%{prj.name}.h"
+        "%{prj.name}/*.h",
+        "%{prj.name}/*.cpp"
     }
 
     includedirs
     {
         "Compiler/",
-        "%{prj.name}/src/"
+        "%{prj.name}/src/",
+        "Vendor/spdlog/include/"
     }
 
     libdirs 
@@ -60,7 +62,8 @@ project "Compiler"
     includedirs
     {
         "%{prj.name}/src",
-        "KR580/"
+        "KR580/",
+        "Vendor/spdlog/include/"
     }
 
     filter "configurations:Debug"
@@ -155,7 +158,8 @@ project "UMPK-80"
         "%{prj.name}/vendor/GLFW/include",
         "%{prj.name}/vendor/stb/",
         "%{prj.name}/vendor/IconsFontAwesome/",
-        "%{prj.name}/vendor/spdlog/include/"
+        "%{prj.name}/vendor/imgui-notify/src",
+        "Vendor/spdlog/include/"
     }
 
     links
