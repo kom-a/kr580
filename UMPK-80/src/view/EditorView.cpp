@@ -1,4 +1,5 @@
 #include "EditorView.h"
+#include "KR580.h"
 
 #include <sstream>
 #include <fstream>
@@ -12,72 +13,8 @@ EditorView::EditorView()
 
 	m_Editor.SetShowWhitespaces(false);
 
-	auto lang = TextEditor::LanguageDefinition::C();
-	lang.mIdentifiers.clear();
-	lang.mKeywords.clear();
-
-	lang.mCaseSensitive = false;
-	
-	lang.mKeywords.insert("MOV");
-	lang.mKeywords.insert("MVI");
-	lang.mKeywords.insert("NOP");
-	lang.mKeywords.insert("LXI");
-	lang.mKeywords.insert("RLC");
-	lang.mKeywords.insert("CMP");
-	lang.mKeywords.insert("JNZ");
-	lang.mKeywords.insert("RST1");
-	lang.mKeywords.insert("INX");
-	lang.mKeywords.insert("JMP");
-	lang.mKeywords.insert("PUSH");
-	lang.mKeywords.insert("XCHG");
-	lang.mKeywords.insert("LDAX");
-	lang.mKeywords.insert("CALL");
-	lang.mKeywords.insert("ANI");
-	lang.mKeywords.insert("RRC");
-	lang.mKeywords.insert("RET");
-	lang.mKeywords.insert("POP");
-	lang.mKeywords.insert("STA");
-	lang.mKeywords.insert("ADD");
-
-	const char* const identifiers[] = {
-			"A", "B", "C", "D", "E", "F", "H", "L", "M",
-			"PSW", "BC", "DE", "HL"
-	};
-
-	for (auto& k : identifiers)
-	{
-		TextEditor::Identifier id;
-		id.mDeclaration = "Register";
-		lang.mIdentifiers.insert(std::make_pair(std::string(k), id));
-	}
-
-	m_Editor.SetLanguageDefinition(lang);
-
-	const TextEditor::Palette palette = { {
-			0xff7f7f7f,	// Default
-			0xffd69c56,	// Keyword	
-			0xff9bc64d,	// Number
-			0xff7070e0,	// String
-			0xff70a0e0, // Char literal
-			0xffffffff, // Punctuation
-			0xff408080,	// Preprocessor
-			0xffaaaaaa, // Identifier
-			0xff9bc64d, // Known identifier
-			0xffc040a0, // Preproc identifier
-			0xff206020, // Comment (single line)
-			0xff406020, // Comment (multi line)
-			0xff252525, // Background
-			0xffe0e0e0, // Cursor
-			0x80a06020, // Selection
-			0x800020ff, // ErrorMarker
-			0x40f08000, // Breakpoint
-			0xff707000, // Line number
-			0x40000000, // Current line fill
-			0x40808080, // Current line fill (inactive)
-			0x40a0a0a0, // Current line edge
-		} };
-
-	m_Editor.SetPalette(palette);
+	m_Editor.SetLanguageDefinition(GetLanguageDefinition());
+	m_Editor.SetPalette(GetDefaultPalette());	
 }
 
 EditorView::~EditorView()
@@ -93,7 +30,7 @@ void EditorView::Render(KR580VM80A* emu)
 	const uint32_t offset = 0x0800;	// Hardcode this for now
 
 	auto cpos = m_Editor.GetCursorPosition();
-	static const char* fileToEdit = "C:/Users/Камиль/Desktop/source_code.asm";
+	static const char* fileToEdit = "C:/Users/Kamil/Desktop/source_code.asm";
 
 	ImGui::Begin("Editor", &m_Open, ImGuiWindowFlags_HorizontalScrollbar);
 
@@ -135,4 +72,79 @@ bool EditorView::SaveToFile(const std::string& filename)
 	file << m_Editor.GetText();
 	file.close();
 	return true;
+}
+
+TextEditor::LanguageDefinition EditorView::GetLanguageDefinition()
+{
+	TextEditor::LanguageDefinition langDef;
+
+	static const char* const keywords[] = {
+			"A", "B", "C", "D", "E", "F", "H", "L", "M", "PSW", "BC", "DE", "HL"
+	};
+
+	for (auto& k : keywords)
+		langDef.mKeywords.insert(k);
+
+	static const char* const identifiers[] = {
+		"ADD", "ADI", "ADC", "ACI", "ANA", "ANI", "CALL", "CZ", "CNZ", 
+		"CP", "CM", "CC", "CNC", "CPE", "CPO", "CMA", "CMC", "CMP", 
+		"CPI", "DAA", "DAD", "DCR", "DCX", "DI", "EI", "HLT", "IN", 
+		"INR", "INX", "JMP", "JZ", "JNZ", "JP", "JM", "JC", "JNC", 
+		"JPE", "JPO", "LDA", "LDAX", "LHLD", "LXI", "MOV", "MVI", 
+		"NOP", "ORA", "ORI", "OUT", "PCHL", "POP", "PUSH", "RAL", 
+		"RAR", "RLC", "RRC", "RIM", "RET", "RZ", "RNZ", "RP", "RM", 
+		"RC", "RNC", "RPE", "RPO", "RST0", "RST1", "RST2", "RST3", 
+		"RST4", "RST5", "RST6", "RST7", "SIM", "SPHL", "SHLD", "STA", 
+		"STAX", "STC", "SUB", "SUI", "SBB", "SBI", "XCHG", "XTHL", "XRA", "XRI", };
+
+	for (auto& k : identifiers)
+	{
+		TextEditor::Identifier id;
+		id.mDeclaration = "Built-in function";
+		langDef.mIdentifiers.insert(std::make_pair(std::string(k), id));
+	}
+
+	langDef.mTokenRegexStrings.push_back(std::make_pair<std::string, TextEditor::PaletteIndex>("0[xX][0-9a-fA-F]*", TextEditor::PaletteIndex::Number));
+	langDef.mTokenRegexStrings.push_back(std::make_pair<std::string, TextEditor::PaletteIndex>("[a-zA-Z_][a-zA-Z0-9_]*[:]$", TextEditor::PaletteIndex::Breakpoint));
+	langDef.mTokenRegexStrings.push_back(std::make_pair<std::string, TextEditor::PaletteIndex>("[a-zA-Z][a-zA-Z0-9]*", TextEditor::PaletteIndex::Identifier));
+
+	langDef.mCommentStart = "\n";
+	langDef.mCommentEnd = "\n";
+	langDef.mSingleLineComment = ";";
+
+	langDef.mCaseSensitive = false;
+	langDef.mAutoIndentation = false;
+
+	langDef.mName = "KR580";
+
+	return langDef;
+}
+
+TextEditor::Palette EditorView::GetDefaultPalette()
+{
+	const TextEditor::Palette palette = { {
+			0xff7f7f7f,	// Default
+			0xffd69c56,	// Keyword	
+			0xff4d9bc6,	// Number
+			0xff7070e0,	// String
+			0xff70a0e0, // Char literal
+			0xffffffff, // Punctuation
+			0xff408080,	// Preprocessor
+			0xffaaaaaa, // Identifier
+			0xff9bc64d, // Known identifier
+			0xffc040a0, // Preproc identifier
+			0xff206020, // Comment (single line)
+			0xff406020, // Comment (multi line)
+			0xff252525, // Background
+			0xffe0e0e0, // Cursor
+			0x80a06020, // Selection
+			0x800020ff, // ErrorMarker
+			0xff9b4dc6, // Breakpoint
+			0xff707000, // Line number
+			0x40000000, // Current line fill
+			0x40808080, // Current line fill (inactive)
+			0x40a0a0a0, // Current line edge
+		} };
+
+	return palette;
 }

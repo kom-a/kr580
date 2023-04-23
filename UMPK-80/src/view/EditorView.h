@@ -30,6 +30,9 @@ public:
 	bool SaveToFile(const std::string& filename);
 
 private:
+	TextEditor::LanguageDefinition GetLanguageDefinition();
+	TextEditor::Palette GetDefaultPalette();
+private:
 	TextEditor m_Editor;
 	Compiler m_Compiler;
 	Disassembler m_Disassembler;
