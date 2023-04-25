@@ -1,8 +1,60 @@
 #include "EditorView.h"
 #include "KR580.h"
 
+#include <string>
 #include <sstream>
 #include <fstream>
+
+
+static std::string g_DebugProgramSrc = R"(inf:
+	mvi b, 0xf7
+	mvi c, 0x00
+	mvi d, 0x00
+loop:
+	mov a, b
+	out 0x07
+	in 0x06
+	cpi 0xff
+	jz else
+	xri 0xff
+	cpi 0x04
+	jnz notfour
+	dcr  a
+notfour:
+	mov d, a
+	mov a, c
+	rlc 
+	add c
+	add d
+	mov d, a
+else:
+	inr c
+	mov a, b
+	rlc 
+	mov b, a 
+	mov a, c
+	cpi 0x02 
+	jnz loop
+	lxi h, 0x0bfa
+clear:
+	mvi m, 0x00
+	inx h
+	mov a, h
+	cpi 0x0c
+	jnz clear
+	lxi h, 0x0bfa
+	m1:
+	mov a, d
+	cpi 0x00
+	jz m2
+	mvi m, 0x5c
+	inx h
+	dcr d
+	jmp m1
+	m2:
+	call 0x01c8
+	jmp inf
+)";
 
 EditorView::EditorView()
 	: m_Editor(),
@@ -15,6 +67,8 @@ EditorView::EditorView()
 
 	m_Editor.SetLanguageDefinition(GetLanguageDefinition());
 	m_Editor.SetPalette(GetDefaultPalette());	
+
+	m_Editor.SetText(g_DebugProgramSrc);
 }
 
 EditorView::~EditorView()
@@ -42,6 +96,8 @@ void EditorView::Render(KR580VM80A* emu)
 	ImGui::Text("%d:%-6d", cpos.mLine + 1, cpos.mColumn + 1);
 	ImGui::SameLine();
 	ImGui::Text("%s%s", fileToEdit, m_Editor.CanUndo() ? "*" : " ");
+
+	m_Editor.MoveHome();
 	
 	ImGui::End();
 }
