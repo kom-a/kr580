@@ -6,6 +6,8 @@
 #include <fstream>
 
 
+// Debug only
+#if 0
 static std::string g_DebugProgramSrc = R"(inf:
 	mvi b, 0xf7
 	mvi c, 0x00
@@ -55,6 +57,57 @@ clear:
 	call 0x01c8
 	jmp inf
 )";
+#else 
+static std::string g_DebugProgramSrc = R"(inf:
+mvi b, f7
+mvi c, 00
+mvi d, 00
+loop:
+mov a, b
+out 07
+in 06
+cpi ff
+jz else
+xri ff
+cpi 04
+jnz notfour
+dcr  a
+notfour:
+mov d, a
+mov a, c
+rlc 
+add c
+add d
+mov d, a
+else:
+inr c
+mov a, b
+rlc 
+mov b, a 
+mov a, c
+cpi 02 
+jnz loop
+lxi h, 0bfa
+clear:
+mvi m, 00
+inx h
+mov a, h
+cpi 0c
+jnz clear
+lxi h, 0bfa
+m1:
+mov a, d
+cpi 00
+jz m2
+mvi m, 5c
+inx h
+dcr d
+jmp m1
+m2:
+call 01c8
+jmp inf
+)";
+#endif
 
 EditorView::EditorView()
 	: m_Editor(),
@@ -68,7 +121,7 @@ EditorView::EditorView()
 	m_Editor.SetLanguageDefinition(GetLanguageDefinition());
 	m_Editor.SetPalette(GetDefaultPalette());	
 
-	//m_Editor.SetText(g_DebugProgramSrc);
+	m_Editor.SetText(g_DebugProgramSrc);
 }
 
 EditorView::~EditorView()
@@ -93,11 +146,9 @@ void EditorView::Render(KR580VM80A* emu)
 	editor_size.y -= ImGui::GetFontSize() + style.CellPadding.y;
 
 	m_Editor.Render("Editor");
-	/*ImGui::Text("%d:%-6d", cpos.mLine + 1, cpos.mColumn + 1);
+	ImGui::Text("%d:%-6d", cpos.mLine + 1, cpos.mColumn + 1);
 	ImGui::SameLine();
-	ImGui::Text("%s%s", fileToEdit, m_Editor.CanUndo() ? "*" : " ");*/
-
-	m_Editor.MoveHome();
+	ImGui::Text("%s%s", fileToEdit, m_Editor.CanUndo() ? "*" : " ");
 	
 	ImGui::End();
 }
@@ -132,7 +183,6 @@ bool EditorView::SaveToFile(const std::string& filename)
 
 TextEditor::LanguageDefinition EditorView::GetLanguageDefinition()
 {
-#if 0
 	TextEditor::LanguageDefinition langDef;
 
 	static const char* const keywords[] = {
@@ -173,9 +223,8 @@ TextEditor::LanguageDefinition EditorView::GetLanguageDefinition()
 	langDef.mAutoIndentation = false;
 
 	langDef.mName = "KR580";
-#endif
 
-	return TextEditor::LanguageDefinition::C();
+	return langDef;
 }
 
 TextEditor::Palette EditorView::GetDefaultPalette()
@@ -204,6 +253,5 @@ TextEditor::Palette EditorView::GetDefaultPalette()
 			0x40a0a0a0, // Current line edge
 		} };
 
-	return TextEditor::GetLightPalette();
 	return palette;
 }
