@@ -68,7 +68,7 @@ EditorView::EditorView()
 	m_Editor.SetLanguageDefinition(GetLanguageDefinition());
 	m_Editor.SetPalette(GetDefaultPalette());	
 
-	m_Editor.SetText(g_DebugProgramSrc);
+	//m_Editor.SetText(g_DebugProgramSrc);
 }
 
 EditorView::~EditorView()
@@ -92,10 +92,10 @@ void EditorView::Render(KR580VM80A* emu)
 	ImVec2 editor_size = ImGui::GetContentRegionAvail();
 	editor_size.y -= ImGui::GetFontSize() + style.CellPadding.y;
 
-	m_Editor.Render("Editor", editor_size);
-	ImGui::Text("%d:%-6d", cpos.mLine + 1, cpos.mColumn + 1);
+	m_Editor.Render("Editor");
+	/*ImGui::Text("%d:%-6d", cpos.mLine + 1, cpos.mColumn + 1);
 	ImGui::SameLine();
-	ImGui::Text("%s%s", fileToEdit, m_Editor.CanUndo() ? "*" : " ");
+	ImGui::Text("%s%s", fileToEdit, m_Editor.CanUndo() ? "*" : " ");*/
 
 	m_Editor.MoveHome();
 	
@@ -132,6 +132,7 @@ bool EditorView::SaveToFile(const std::string& filename)
 
 TextEditor::LanguageDefinition EditorView::GetLanguageDefinition()
 {
+#if 0
 	TextEditor::LanguageDefinition langDef;
 
 	static const char* const keywords[] = {
@@ -172,8 +173,9 @@ TextEditor::LanguageDefinition EditorView::GetLanguageDefinition()
 	langDef.mAutoIndentation = false;
 
 	langDef.mName = "KR580";
+#endif
 
-	return langDef;
+	return TextEditor::LanguageDefinition::C();
 }
 
 TextEditor::Palette EditorView::GetDefaultPalette()
@@ -202,5 +204,6 @@ TextEditor::Palette EditorView::GetDefaultPalette()
 			0x40a0a0a0, // Current line edge
 		} };
 
+	return TextEditor::GetLightPalette();
 	return palette;
 }

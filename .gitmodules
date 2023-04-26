@@ -16,3 +16,6 @@
 	path = UMPK-80/vendor/spdlog
 	url = https://github.com/gabime/spdlog
 	branch = v1.x
+[submodule "UMPK-80/vendor/imgui/ImGuiColorTextEdit"]
+	path = UMPK-80/vendor/imgui/ImGuiColorTextEdit
+	url = https://github.com/kom-a/ImGuiColorTextEdit.git
