@@ -9,7 +9,7 @@ MemoryView::MemoryView(uint8_t* memory, size_t memory_size)
 {
 	m_MemoryEditor.Cols = 1;
 	m_MemoryEditor.OptShowAscii = true;
-	m_MemoryEditor.OptShowOptions = false;
+	m_MemoryEditor.OptShowOptions = true;
 }
 
 MemoryView::~MemoryView()
