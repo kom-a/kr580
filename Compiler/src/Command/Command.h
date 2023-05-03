@@ -400,7 +400,7 @@ static int8_t getCommandOpcode(const std::string& command)
     {
         return -1;
     }
-;}
+}
 
 static bool prototypeExists(const std::string& command, const std::string& argument1, const std::string& argument2)
 {

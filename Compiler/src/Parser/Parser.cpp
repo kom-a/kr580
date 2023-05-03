@@ -225,11 +225,11 @@ void normalize(std::string& source)
 	deleteMultipleSpaces(source);
 }
 
-bool isUnrefLabel(std::string label, std::vector<std::tuple<std::string, int>>& unrefLabels)
+bool isUnrefLabel(std::string label, std::vector<std::tuple<std::tuple<int, std::string>, int>>& unrefLabels)
 {
 	for (auto ln : unrefLabels)
 	{
-		if (std::get<0>(ln) == label)
+		if (std::get<1>(std::get<0>(ln)) == label)
 		{
 			return true;
 		}
@@ -237,11 +237,16 @@ bool isUnrefLabel(std::string label, std::vector<std::tuple<std::string, int>>& 
 	return false;
 }
 
-void insertUnrefLabelAddresses(std::string label, int16_t address, std::vector<uint8_t>& arr, std::map<std::string, int>& labels, std::vector<std::tuple<std::string, int>>& unrefLabels, int offset)
+void insertUnrefLabelAddresses(
+	std::string label,
+	int16_t address,
+	std::vector<uint8_t>& arr,
+	std::map<std::string, int>& labels,
+	std::vector<std::tuple<std::tuple<int, std::string>, int>>& unrefLabels, int offset)
 {
 	for(int i = 0; i < unrefLabels.size(); i++)
 	{
-		if (std::get<0>(unrefLabels[i]) == label)
+		if (std::get<1>(std::get<0>(unrefLabels[i])) == label)
 		{
 			arr[std::get<1>(unrefLabels[i])] = ((address + offset) & 0x000000ff);
 			arr[std::get<1>(unrefLabels[i]) + 1] = ((address + offset) & 0x0000ff00) >> 8;
@@ -253,9 +258,17 @@ void insertUnrefLabelAddresses(std::string label, int16_t address, std::vector<u
 
 void UnknownLabelLeft(std::string label)
 {
-	RaiseError(CompilerError::UNDEFINED_LABEL, "unknown label" + quote(label));
+	RaiseError(CompilerError::UNDEFINED_LABEL, "unknown label " + quote(label));
 }
-void Parse(std::string source, std::vector<uint8_t>& byteArray, std::map<std::string, int>& labels, std::vector<std::tuple<std::string, int>>& unrefLabels, const int& offset)
+
+void Parse(
+	std::string source,
+	std::vector<uint8_t>& byteArray,
+	std::map<std::string, int>& labels,
+	std::vector<std::tuple<std::tuple<int, std::string>, int>>& unrefLabels,
+	const int& offset,
+	const int line
+)
 {
 	std::string errMessage = "";
 	normalize(source);
@@ -387,9 +400,10 @@ void Parse(std::string source, std::vector<uint8_t>& byteArray, std::map<std::st
 					}
 					else
 					{
-						unrefLabels.push_back({ std::string(tokens[1]), byteArray.size()});
-						byteArray.push_back(0x0000 & 0x000000ff);
-						byteArray.push_back((0x0000 & 0x0000ff00) >> 8);
+						unrefLabels.push_back({{line + 1, std::string(tokens[1])}, (int)byteArray.size()});
+						byteArray.push_back(0);
+						byteArray.push_back(0);
+						// do not raise error because for now label is probably below
 						//RaiseError(CompilerError::UNDEFINED_LABEL, "unknown label " + quote(tokens[1]));
 					}
 				}

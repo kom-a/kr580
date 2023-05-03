@@ -37,7 +37,7 @@ void Compiler::Compile(std::string source, const int offset)
 	std::vector<uint8_t> tmp;
 	// NAME; CALLED FROM; REFS TO
 	std::map<std::string, int> labels;
-	std::vector<std::tuple<std::string, int>> unrefLabels;
+	std::vector<std::tuple<std::tuple<int, std::string>, int>> unrefLabels;
 	//reset errors
 	compileErrors.ClearMessages();
 	errorOccured = false;
@@ -49,7 +49,7 @@ void Compiler::Compile(std::string source, const int offset)
 	{
 		try
 		{
-			Parse(tokens[i], tmp, labels, unrefLabels, offset);
+			Parse(tokens[i], tmp, labels, unrefLabels, offset, i);
 		}
 		catch (std::string ex)
 		{
@@ -60,17 +60,18 @@ void Compiler::Compile(std::string source, const int offset)
 
 	if (unrefLabels.size() != 0)
 	{
-		try
+
+		for (auto &label : unrefLabels)
 		{
-			for (auto label : unrefLabels)
+			try
 			{
-				UnknownLabelLeft(std::get<0>(label));
+				UnknownLabelLeft(std::get<1>(std::get<0>(label)));
 			}
-		}
-		catch (const std::string ex)
-		{
-			errorOccured = true;
-			compileErrors.WriteError(-99, ex);
+			catch (const std::string ex)
+			{
+				errorOccured = true;
+				compileErrors.WriteError(std::get<0>(std::get<0>(label)), ex);
+			}
 		}
 	}
 	else if(!errorOccured)
