@@ -23,7 +23,7 @@ void MemoryView::Render(KR580VM80A* emu)
 		return;
 
 	ImGui::Begin("Memory", &m_Open);
-	m_MemoryEditor.DrawContents(emu->Memory + KR580VM80A::USER_MEMORY_OFFSET, KR580VM80A::USER_MEMORY_SIZE, KR580VM80A::USER_MEMORY_OFFSET, false, &emu->PC, "PC -> ");
+	m_MemoryEditor.DrawContents(emu->Memory + KR580VM80A::USER_MEMORY_OFFSET, KR580VM80A::USER_MEMORY_SIZE, KR580VM80A::USER_MEMORY_OFFSET, &emu->PC, "PC -> ");
 	ImGui::End();
 }
 

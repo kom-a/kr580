@@ -4,6 +4,7 @@ InPortView::InPortView()
 {
 	m_Editor.OptShowAscii = false;
 	m_Editor.OptShowOptions = false;
+	m_Editor.OptReverse = true;
 	m_Editor.Cols = 16;
 }
 
