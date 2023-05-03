@@ -184,6 +184,7 @@ std::vector<std::string> tokenizeCommand(const std::string& source)
 /// Deletes multiple spaces
 void deleteMultipleSpaces(std::string& source)
 {
+	// turns multi spaces into one space 
 	for (int i = source.size() - 1; i > 0; i--)
 	{
 		if (source[i] == ' ' && source[i] == source[i - 1])
@@ -191,6 +192,9 @@ void deleteMultipleSpaces(std::string& source)
 			source.erase(source.begin() + i);
 		}
 	}
+	// deletes leading space if there was some leading whitespaces 
+	if (source[0] == ' ')
+		source.erase(source.begin());
 }
 ///Replaces each whitespace to space
 void wspaceToSpace(std::string& source)
