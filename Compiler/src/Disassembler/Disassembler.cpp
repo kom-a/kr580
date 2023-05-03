@@ -120,11 +120,7 @@ std::vector<std::string> Disassembler::GetMnemonics(const std::vector<uint8_t>& 
 			{
 				std::string byte = toHexString(byteArr[k]);
 				strToUpper(byte);
-
-				if (argType == "d8")
-					line += " " + byte;
-				else
-					line += byte;
+				line += byte;
 			}
 
 			if (k != i)  //not enough bytes
