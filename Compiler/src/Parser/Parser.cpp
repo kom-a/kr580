@@ -23,12 +23,25 @@ bool isRegister(const std::string& source)
 	return false;
 }
 
-bool isData8(const std::string& source)
-{
-	if (source.size() != 2)
+bool startsWithPrefix(const std::string& source) {
+	// here whole string is already uppercase
+	if (source[0] == '0' && source[1] == 'X')
+		return true;
+	else
 		return false;
 
-	int i = 0;
+}
+	
+bool isData8(const std::string& source)
+{
+	if (source.size() != 4)
+		return false;
+
+	if (!startsWithPrefix(source))
+		return false;
+
+	// number start index without prefix
+	int i = 2;
 	char c = source[i];
 	while (c != '\0')
 	{
@@ -42,10 +55,14 @@ bool isData8(const std::string& source)
 
 bool isData16(const std::string& source)
 {
-	if (source.size() != 4)
+	if (source.size() != 6)
 		return false;
 
-	int i = 0;
+	if (!startsWithPrefix(source))
+		return false;
+
+	// number start index without prefix
+	int i = 2;
 	char c = source[i];
 	while (c != '\0')
 	{
@@ -323,19 +340,21 @@ void Parse(
 				byteArray.push_back(code);
 				
 				if(argType1 == "d8")
-					byteArray.push_back((uint8_t)strtol(tokens[1].c_str(), nullptr, 16));
+					byteArray.push_back((uint8_t)strtol(tokens[1].substr(2).c_str(), nullptr, 16));
 				else if (argType1 == "d16")
 				{
-					byteArray.push_back((uint8_t)strtol(tokens[1].substr(2).c_str(), nullptr, 16));
-					byteArray.push_back((uint8_t)strtol(tokens[1].substr(0, 2).c_str(), nullptr, 16));
+					// first byte
+					byteArray.push_back((uint8_t)strtol(tokens[1].substr(2, 2).c_str(), nullptr, 16));
+					// secons byte 
+					byteArray.push_back((uint8_t)strtol(tokens[1].substr(4).c_str(), nullptr, 16));
 				}
 
 				if (argType2 == "d8")
-					byteArray.push_back((uint8_t)strtol(tokens[2].c_str(), nullptr, 16));
+					byteArray.push_back((uint8_t)strtol(tokens[2].substr(2).c_str(), nullptr, 16));
 				else if (argType2 == "d16")
 				{
-					byteArray.push_back((uint8_t)strtol(tokens[2].substr(2).c_str(), nullptr, 16));
-					byteArray.push_back((uint8_t)strtol(tokens[2].substr(0, 2).c_str(), nullptr, 16));
+					byteArray.push_back((uint8_t)strtol(tokens[2].substr(2, 2).c_str(), nullptr, 16));
+					byteArray.push_back((uint8_t)strtol(tokens[2].substr(4).c_str(), nullptr, 16));
 				}
 
 			}
