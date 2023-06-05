@@ -400,8 +400,8 @@ void Parse(
 					byteArray.push_back((uint8_t)strtol(tokens[1].c_str(), nullptr, 16));
 				else if (argType == "d16")
 				{
-					byteArray.push_back((uint8_t)strtol(tokens[1].substr(2).c_str(), nullptr, 16));
-					byteArray.push_back((uint8_t)strtol(tokens[1].substr(0, 2).c_str(), nullptr, 16));
+					byteArray.push_back((uint8_t)strtol(tokens[1].substr(4).c_str(), nullptr, 16));
+					byteArray.push_back((uint8_t)strtol(tokens[1].substr(2, 2).c_str(), nullptr, 16));
 				}
 				else if (argType == "label")
 				{

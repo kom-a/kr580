@@ -72,45 +72,45 @@ std::vector<std::string> Disassembler::GetMnemonics(const std::vector<uint8_t>& 
 		std::string argType;
 		//Get opcode
 		OpcodeInfo_t arg = getArgInfo(byteArr[i]);
-		if (arg.Length != 0)
+ 		if (arg.Length != 0) 
 		{
-			std::string commnadPrototype = arg.Mnemonic;
+			std::string commandPrototype = arg.Mnemonic;
 			std::string command;
-			int ind = commnadPrototype.find("d8");			//data8 arg
+			int ind = commandPrototype.find("d8");			//data8 arg
 			if (ind != -1)
 			{
 				argType = "d8";
-				command = commnadPrototype.substr(0, ind);
-				line += command;
+				command = commandPrototype.substr(0, ind);
+				line += command + "0x";
 			}
 
-			ind = commnadPrototype.find("d16");				//data16 arg
+			ind = commandPrototype.find("d16");				//data16 arg
 			if (ind != -1)
 			{
 				argType = "d16";
-				command = commnadPrototype.substr(0, ind);
-				line += command;
+				command = commandPrototype.substr(0, ind);
+				line += command + "0x";
 			}
 
-			ind = commnadPrototype.find("a16");				//address arg
+			ind = commandPrototype.find("a16");				//address arg
 			if (ind != -1)
 			{
 				argType = "a16";
-				command = commnadPrototype.substr(0, ind);
+				command = commandPrototype.substr(0, ind);
 				line += command;
 			}
 
-			ind = commnadPrototype.find("pp");				//port arg
+			ind = commandPrototype.find("pp");				//port arg
 			if (ind != -1)
 			{
 				argType = "pp";
-				command = commnadPrototype.substr(0, ind);
-				line += command;
+				command = commandPrototype.substr(0, ind);
+				line += command + "0x";
 			}
 
 			if (argType.empty())
 			{
-				command = commnadPrototype;
+				command = commandPrototype;
 				line += command;
 			}
 			//Get command bytes 
@@ -131,11 +131,11 @@ std::vector<std::string> Disassembler::GetMnemonics(const std::vector<uint8_t>& 
 			else
 			{
 				i += j;
-				int ind = commnadPrototype.find(' ');
+				int ind = commandPrototype.find(' ');
 				if (ind != -1)
 				{
-					commnadPrototype[ind] = '_';
-					if (isLabelArgCommand(commnadPrototype))
+					commandPrototype[ind] = '_';
+					if (isLabelArgCommand(commandPrototype))
 					{
 						int16_t addr = ((uint16_t)byteArr[i]) << 8;
 						addr = addr + (uint16_t)byteArr[i - 1];
