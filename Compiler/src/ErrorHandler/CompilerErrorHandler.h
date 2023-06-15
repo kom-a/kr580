@@ -11,7 +11,7 @@ enum class CompilerError
 	UNEXPECTED_ERROR,
 	INVALID_LABEL,
 	UNDEFINED_LABEL,
-	ALREADY_DEFINED_LABEL,
+	REDEFINED_LABEL,
 };
 
 const static std::vector<std::tuple<CompilerError, std::string>> CompileErrMessages
@@ -22,7 +22,7 @@ const static std::vector<std::tuple<CompilerError, std::string>> CompileErrMessa
 	{ CompilerError::UNEXPECTED_ERROR, "UNEXPECTED COMPILE ERROR: " },
 	{ CompilerError::INVALID_LABEL, "COMPILE ERROR INVALID LABEL: " },
 	{ CompilerError::UNDEFINED_LABEL, "COMPILE ERROR UNDEFINED LABEL: " },
-	{ CompilerError::ALREADY_DEFINED_LABEL, "COMPILE ERROR ALREADY DEFINED LABEL: " },
+	{ CompilerError::REDEFINED_LABEL, "COMPILE ERROR REDEFINED LABEL: " },
 };
 
 static std::string quote(std::string str)
