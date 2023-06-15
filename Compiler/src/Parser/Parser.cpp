@@ -343,18 +343,18 @@ void Parse(
 					byteArray.push_back((uint8_t)strtol(tokens[1].substr(2).c_str(), nullptr, 16));
 				else if (argType1 == "d16")
 				{
-					// first byte
-					byteArray.push_back((uint8_t)strtol(tokens[1].substr(2, 2).c_str(), nullptr, 16));
 					// secons byte 
 					byteArray.push_back((uint8_t)strtol(tokens[1].substr(4).c_str(), nullptr, 16));
+					// first byte
+					byteArray.push_back((uint8_t)strtol(tokens[1].substr(2, 2).c_str(), nullptr, 16));
 				}
 
 				if (argType2 == "d8")
 					byteArray.push_back((uint8_t)strtol(tokens[2].substr(2).c_str(), nullptr, 16));
 				else if (argType2 == "d16")
 				{
-					byteArray.push_back((uint8_t)strtol(tokens[2].substr(2, 2).c_str(), nullptr, 16));
 					byteArray.push_back((uint8_t)strtol(tokens[2].substr(4).c_str(), nullptr, 16));
+					byteArray.push_back((uint8_t)strtol(tokens[2].substr(2, 2).c_str(), nullptr, 16));
 				}
 
 			}
@@ -452,7 +452,7 @@ void Parse(
 					}
 					else
 					{
-						RaiseError(CompilerError::ALREADY_DEFINED_LABEL, "label " + quote(tokens[0]) + "is already defined");
+						RaiseError(CompilerError::REDEFINED_LABEL, "label " + quote(tokens[0]) + "is already defined");
 					}
 				}
 				else

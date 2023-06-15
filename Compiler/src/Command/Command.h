@@ -11,12 +11,19 @@ const std::map<std::string, int> BuilInLabels
     {"DECODE_DISPLAY", 0x01E9},
     {"MELODY_1", 0x05B0},
     {"MELODY_2", 0x05BA},
+    {"ORGAN", 0x04FC},
+    {"STOPWATCH", 0x0481},
+    {"FIX_SLEEP", 0x0429},
+    {"SLEEP", 0x0430},
+    {"MULT", 0x04E1},
+    {"DETECT_KEYS", 0x0429},
+    {"SCAN_KEYBOARD", 0x014B},
 };
 
 const COMMAND_PROTOTYPE Prototypes[]
 {
     {"ADD" , "reg", ""},
-    {"ADD", "d8", ""},
+    {"ADI", "d8", ""},
     {"ADC", "reg", ""},
     {"ACI", "d8", ""},
     {"ANA", "reg", ""},
@@ -114,7 +121,7 @@ const COMMAND ISA =
     {"ADD_H", 0x84},
     {"ADD_L", 0x85},
     {"ADD_M", 0x86},
-    {"ADI_D8", 0xC6},
+    {"ADI_d8", 0xC6},
     {"ADC_A", 0x8F},
     {"ADC_B", 0x88},
     {"ADC_C", 0x89},
@@ -123,7 +130,7 @@ const COMMAND ISA =
     {"ADC_H", 0x8C},
     {"ADC_L", 0x8D},
     {"ADC_M", 0x8E},
-    {"ACI_D8", 0xCE},
+    {"ACI_d8", 0xCE},
     {"ANA_A", 0xA7},
     {"ANA_B", 0xA0},
     {"ANA_C", 0xA1},
