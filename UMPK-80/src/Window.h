@@ -6,9 +6,10 @@
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
-
-#include "views/View.h"
 #include <imgui/imgui.h>
+#include <ImGuiFileBrowser.h>
+
+#include <KR580.h>
 
 class Window
 {
@@ -18,25 +19,30 @@ public:
 
 public:
 	void Update();
-	void Render(KR580VM80A* emu);
-	void Add(View* view);
+	void Render(KR580::KR580VM80A* emu);
 
 public:
 	inline bool Closed() const { return glfwWindowShouldClose(m_GLFWWindow); }
 
 private:
 	friend void GLFWErrorCallback(int error, const char* description);
+	friend void GLFWWindowResizeCallback(GLFWwindow* window, int width, int height);
 
 private:
 	bool Init();
 	void InitImGui();
 	void InitImGuiStyle();
+	void ImGuiNewFrame();
+	void ImGuiEndFrame();
+
+	void RenderMainMenubar(KR580::KR580VM80A* emu);
+	void RenderViews(KR580::KR580VM80A* emu);
+	void RenderSettingsModal(KR580::KR580VM80A* emu);
 
 private:
 	GLFWwindow* m_GLFWWindow;
 	int32_t m_Width, m_Height;
 	std::string m_Title;
-	ImFont* m_Font;
 
-	std::vector<View*> m_Views;
+	imgui_addons::ImGuiFileBrowser m_FileDialog;
 };

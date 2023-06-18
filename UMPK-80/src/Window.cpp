@@ -6,12 +6,33 @@
 #include <imgui/backends/imgui_impl_glfw.h>
 #include <imgui/backends/imgui_impl_opengl3.h>
 
+#include <imgui/imgui_internal.h>
+
+#include "view/ViewManager.h"
+#include "Icons.h"
+#include "Settings.h"
+
+#define SOURCE_CODE_FILE_FORMAT ".asm"
+#define MACHINE_CODE_FILE_FORMAT ".obj"
+#define FILE_FORMATS (SOURCE_CODE_FILE_FORMAT "," MACHINE_CODE_FILE_FORMAT)
+
+using namespace KR580;
+
+void GLFWErrorCallback(int error, const char* description);
+void GLFWWindowResizeCallback(GLFWwindow* window, int width, int height);
+
+static inline bool ends_with(std::string const& value, std::string const& ending)
+{
+	if (ending.size() > value.size()) return false;
+	return std::equal(ending.rbegin(), ending.rend(), value.rbegin());
+}
+
 Window::Window(int32_t width, int32_t height, const std::string& title)
 	: m_Width(width),
 	m_Height(height),
 	m_Title(title),
 	m_GLFWWindow(nullptr),
-	m_Font(nullptr)
+	m_FileDialog()
 {
 	if (!Init())
 	{
@@ -22,9 +43,6 @@ Window::Window(int32_t width, int32_t height, const std::string& title)
 
 Window::~Window()
 {
-	for (int i = 0; i < m_Views.size(); i++)
-		delete m_Views[i];
-
 	ImGui_ImplOpenGL3_Shutdown();
 	ImGui_ImplGlfw_Shutdown();
 	ImGui::DestroyContext();
@@ -44,6 +62,8 @@ bool Window::Init()
 		return false;
 	glfwMakeContextCurrent(m_GLFWWindow);
 	glfwSwapInterval(1);
+	glfwSetWindowUserPointer(m_GLFWWindow, this);
+	glfwSetWindowSizeCallback(m_GLFWWindow, GLFWWindowResizeCallback);
 
 	InitImGui();
 
@@ -64,9 +84,14 @@ void Window::InitImGui()
 	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
 	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
 	io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
-	//io.ConfigViewportsNoAutoMerge = true;
-	//io.ConfigViewportsNoTaskBarIcon = true;
-	m_Font = io.Fonts->AddFontFromFileTTF("res/Cascadia Mono PL Bold 700.otf", 14);
+
+	const float fontSize = 18.0f;
+	io.Fonts->AddFontFromFileTTF("res/RobotoMono-Bold.ttf", fontSize, nullptr, io.Fonts->GetGlyphRangesCyrillic());
+
+	static const ImWchar icons_ranges[] = { ICON_MIN_FA, ICON_MAX_FA, 0 }; // will not be copied by AddFont* so keep in scope.
+	ImFontConfig config;
+	config.MergeMode = true;
+	io.Fonts->AddFontFromFileTTF("res/Font Awesome 6 Free-Solid-900.otf", fontSize * 0.9f, &config, icons_ranges);
 
 	InitImGuiStyle();
 
@@ -114,28 +139,30 @@ void Window::InitImGuiStyle()
 	colors[ImGuiCol_DockingPreview] = ImVec4(0.35f, 0.35f, 0.35f, 0.70f);
 }
 
-void Window::Update()
-{
-	glfwPollEvents();
-
-	ImGui::Render();
-	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-
-	ImGui::UpdatePlatformWindows();
-	ImGui::RenderPlatformWindowsDefault();
-	glfwMakeContextCurrent(m_GLFWWindow);
-
-	glfwSwapBuffers(m_GLFWWindow);
-}
-
-void Window::Render(KR580VM80A* emu)
+void Window::ImGuiNewFrame()
 {
 	ImGui_ImplOpenGL3_NewFrame();
 	ImGui_ImplGlfw_NewFrame();
 	ImGui::NewFrame();
 	ImGui::DockSpaceOverViewport();
+}
 
-	ImGui::PushFont(m_Font);
+void Window::ImGuiEndFrame()
+{
+	ImGui::Render();
+	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+	
+	ImGui::UpdatePlatformWindows();
+	ImGui::RenderPlatformWindowsDefault();
+	glfwMakeContextCurrent(m_GLFWWindow);
+}
+
+void Window::RenderMainMenubar(KR580VM80A* emu)
+{
+	ViewManager& viewManager = ViewManager::GetInstance();
+
+	bool load_file = false, save_source_code = false, save_machine_code = false;
+	bool showSettingsModal = false;
 
 	if (ImGui::BeginMainMenuBar())
 	{
@@ -143,22 +170,107 @@ void Window::Render(KR580VM80A* emu)
 		{
 			if (ImGui::MenuItem("New"))
 			{
-				//Do something
+				EditorView* editor = viewManager.GetEditorView();
+				TextEditor::ErrorMarkers no_errors;
+				std::string empty_source;
+
+				// TODO: Ask if user wants to save previous source code or something
+				editor->SetErrors(no_errors);
+				editor->SetText(empty_source);
+				emu->Init();
+			}
+			if (ImGui::MenuItem("Open"))
+			{
+				load_file = true;
+			}
+			ImGui::Separator();
+			if (ImGui::MenuItem("Save as *.asm"))
+			{
+				save_source_code = true;
+			}
+			if (ImGui::MenuItem("Save as *.obj"))
+			{
+				save_machine_code = true;
+			}
+			ImGui::Separator();
+			if (ImGui::MenuItem("Exit"))
+			{
+				glfwSetWindowShouldClose(m_GLFWWindow, true);
 			}
 			ImGui::EndMenu();
 		}
+		if (ImGui::BeginMenu("Edit"))
+		{
+			EditorView* editor = viewManager.GetEditorView();
+			bool can_undo = editor->CanUndo();
+			bool can_redo = editor->CanRedo();
 
+			if (!can_undo)
+				ImGui::BeginDisabled();
+			if (ImGui::MenuItem("Undo", "Ctrl+Z"))
+			{
+				editor->Undo();
+			}
+			if (!can_undo)
+				ImGui::EndDisabled();
+
+			if (!can_redo)
+				ImGui::BeginDisabled();
+			if (ImGui::MenuItem("Redo", "Ctrl+Y"))
+			{
+				editor->Redo();
+			}
+			if (!can_redo)
+				ImGui::EndDisabled();
+
+			ImGui::Separator();
+
+			if (ImGui::MenuItem("Cut", "Ctrl+X"))
+			{
+				editor->Cut();
+			}
+			if (ImGui::MenuItem("Copy", "Ctrl+C"))
+			{
+				editor->Copy();
+			}
+			if (ImGui::MenuItem("Paste", "Ctrl+V"))
+			{
+				editor->Paste();
+			}
+			ImGui::EndMenu();
+		}
 		if (ImGui::BeginMenu("View"))
 		{
 			if (ImGui::MenuItem("Editor"))
-			{
-				//Do something
-			}
+				viewManager.GetEditorView()->Open();
 			if (ImGui::MenuItem("Memory"))
-			{
-				//Do something
-			}
+				viewManager.GetMemoryView()->Open();
+			if (ImGui::MenuItem("Registers"))
+				viewManager.GetRegisterView()->Open();
 			if (ImGui::MenuItem("Stack"))
+				viewManager.GetStackView()->Open();
+			if (ImGui::MenuItem("In ports"))
+				viewManager.GetInPortsView()->Open();
+			if (ImGui::MenuItem("Out ports"))
+				viewManager.GetOutPortsView()->Open();
+			if (ImGui::MenuItem("Stand tools"))
+				viewManager.GetStandToolsView()->Open();
+
+			ImGui::Separator();
+
+			ImGui::EndMenu();
+		}
+		if (ImGui::BeginMenu("Tools"))
+		{
+			if (ImGui::MenuItem("Settings..."))
+				showSettingsModal = true;
+
+
+			ImGui::EndMenu();
+		}
+		if (ImGui::BeginMenu("Help"))
+		{
+			if (ImGui::MenuItem("Built-in"))
 			{
 				//Do something
 			}
@@ -168,21 +280,153 @@ void Window::Render(KR580VM80A* emu)
 		ImGui::EndMainMenuBar();
 	}
 
-	ImGui::ShowDemoWindow();
-	ImGui::ShowMetricsWindow();
+	if (load_file)
+		ImGui::OpenPopup("Open File");
+	if (save_source_code)
+		ImGui::OpenPopup("Save File#sourcecode");
+	if (save_machine_code)
+		ImGui::OpenPopup("Save File#machinecode");
+	if (showSettingsModal)
+		ImGui::OpenPopup("Settings");
 
-	for (View* view : m_Views)
-		view->Render(emu);
+	if (m_FileDialog.showFileDialog("Open File", imgui_addons::ImGuiFileBrowser::DialogMode::OPEN, ImVec2(0, 0), FILE_FORMATS))
+	{
+		if (m_FileDialog.ext == SOURCE_CODE_FILE_FORMAT)
+		{
+			EditorView* editor_view = viewManager.GetEditorView();
 
-	ImGui::PopFont();
+			if (!editor_view->LoadFromFile(m_FileDialog.selected_path))
+			{
+				// Log an error during source code file loading
+			}
+		}
+		else if (m_FileDialog.ext == MACHINE_CODE_FILE_FORMAT)
+		{
+			MemoryView* memory_view = viewManager.GetMemoryView();
+
+			if (!memory_view->LoadFromFile(m_FileDialog.selected_path))
+			{
+				// Log an error during machine code file loading
+			}
+		}
+		else
+		{
+			// Incorrect file type
+		}
+	}
+
+	if (m_FileDialog.showFileDialog("Save File#sourcecode", imgui_addons::ImGuiFileBrowser::DialogMode::SAVE, ImVec2(0, 0), SOURCE_CODE_FILE_FORMAT))
+	{
+		std::string save_filename = ends_with(m_FileDialog.selected_path, SOURCE_CODE_FILE_FORMAT)
+			? m_FileDialog.selected_path
+			: m_FileDialog.selected_path.append(SOURCE_CODE_FILE_FORMAT);
+
+		EditorView* editor_view = viewManager.GetEditorView();
+
+		if (!editor_view->SaveToFile(save_filename))
+		{
+			// Log an error during source code saving to file
+		}
+	}
+
+	if (m_FileDialog.showFileDialog("Save File#machinecode", imgui_addons::ImGuiFileBrowser::DialogMode::SAVE, ImVec2(0, 0), MACHINE_CODE_FILE_FORMAT))
+	{
+		std::string save_filename = ends_with(m_FileDialog.selected_path, MACHINE_CODE_FILE_FORMAT)
+			? m_FileDialog.selected_path
+			: m_FileDialog.selected_path.append(MACHINE_CODE_FILE_FORMAT);
+
+		MemoryView* memory_view = viewManager.GetMemoryView();
+
+		if (!memory_view->SaveToFile(save_filename))
+		{
+			// Log an error during machine code saving to file
+		}
+	}
+
+	RenderSettingsModal(emu);
 }
 
-void Window::Add(View* view)
+void Window::RenderViews(KR580VM80A* emu)
 {
-	m_Views.push_back(view);
+	ViewManager& viewManager = ViewManager::GetInstance();
+	viewManager.Render(emu);
+}
+
+void Window::RenderSettingsModal(KR580::KR580VM80A* emu)
+{
+	ImVec2 center = ImGui::GetMainViewport()->GetCenter();
+	ImGui::SetNextWindowPos(center, ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
+
+	if (ImGui::BeginPopupModal("Settings", NULL, ImGuiWindowFlags_AlwaysAutoResize))
+	{
+		Settings& settings = Settings::Get();
+
+		{
+			ImGui::Text("Load at PC: ");
+			ImGui::SameLine();
+			ImGui::Checkbox("##loadAtPC", &settings.LoadAtProgramCounter);
+
+			ImGui::BeginDisabled(settings.LoadAtProgramCounter);
+
+			const char* load_address_label = "Load address: ";
+			const std::string load_address_label_placeholader = std::string("").append(strlen(load_address_label), ' ');
+
+			ImGui::Text(load_address_label);
+			ImGui::SameLine();
+
+			ImGui::BeginDisabled();
+			ImGui::DragInt("##loadAddress", &settings.LoadAddress, 1.0f, 0, 0, "0x%04x");
+			ImGui::EndDisabled();
+
+			ImGui::Text(load_address_label_placeholader.c_str());
+			ImGui::SameLine();
+			ImGui::SliderInt("##loadAddressSlider", &settings.LoadAddress, KR580VM80A::USER_MEMORY_OFFSET, KR580VM80A::USER_MEMORY_OFFSET + KR580VM80A::USER_MEMORY_SIZE, "");
+
+			ImGui::EndDisabled();
+		}
+		
+		ImGui::Separator();
+
+		{
+			ImGui::Text("Font scale: ");
+			ImGui::SameLine();
+			ImGui::DragFloat("Font scale", &ImGui::GetIO().FontGlobalScale, 0.005f, 0.3f, 2.0f, "%.1f");
+		}
+
+		if (ImGui::Button("OK", ImVec2(120, 0))) { ImGui::CloseCurrentPopup(); }
+		ImGui::SetItemDefaultFocus();
+		ImGui::EndPopup();
+	}
+}
+
+void Window::Update()
+{
+	glfwPollEvents();
+
+	ImGuiEndFrame();
+
+	glfwSwapBuffers(m_GLFWWindow);
+}
+
+void Window::Render(KR580VM80A* emu)
+{
+	ImGuiNewFrame();
+
+	RenderMainMenubar(emu);
+	RenderViews(emu);
+
+	ImGui::ShowDemoWindow();
+	ImGui::ShowMetricsWindow();
 }
 
 void GLFWErrorCallback(int error, const char* description)
 {
 	fprintf(stderr, "Glfw Error %d: %s\n", error, description);
+}
+
+void GLFWWindowResizeCallback(GLFWwindow* window, int width, int height)
+{
+	Window* user_window = (Window*)glfwGetWindowUserPointer(window);
+	user_window->m_Width = width;
+	user_window->m_Height = height;
 }

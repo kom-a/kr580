@@ -9,5 +9,6 @@ const std::string Register[]{
 	"H",
 	"L",
 	"M",
-	"SP"
+	"SP", 
+	"PSW",
 };

@@ -7,13 +7,23 @@
 
 const std::map<std::string, int> BuilInLabels
 {
-    {"DISPLAY", 0x1234},
+    {"DISPLAY", 0x01C8},
+    {"DECODE_DISPLAY", 0x01E9},
+    {"MELODY_1", 0x05B0},
+    {"MELODY_2", 0x05BA},
+    {"ORGAN", 0x04FC},
+    {"STOPWATCH", 0x0481},
+    {"FIX_SLEEP", 0x0429},
+    {"SLEEP", 0x0430},
+    {"MULT", 0x04E1},
+    {"DETECT_KEYS", 0x0429},
+    {"SCAN_KEYBOARD", 0x014B},
 };
 
 const COMMAND_PROTOTYPE Prototypes[]
 {
     {"ADD" , "reg", ""},
-    {"ADD", "d8", ""},
+    {"ADI", "d8", ""},
     {"ADC", "reg", ""},
     {"ACI", "d8", ""},
     {"ANA", "reg", ""},
@@ -111,7 +121,7 @@ const COMMAND ISA =
     {"ADD_H", 0x84},
     {"ADD_L", 0x85},
     {"ADD_M", 0x86},
-    {"ADI_D8", 0xC6},
+    {"ADI_d8", 0xC6},
     {"ADC_A", 0x8F},
     {"ADC_B", 0x88},
     {"ADC_C", 0x89},
@@ -120,7 +130,7 @@ const COMMAND ISA =
     {"ADC_H", 0x8C},
     {"ADC_L", 0x8D},
     {"ADC_M", 0x8E},
-    {"ACI_D8", 0xCE},
+    {"ACI_d8", 0xCE},
     {"ANA_A", 0xA7},
     {"ANA_B", 0xA0},
     {"ANA_C", 0xA1},
@@ -373,6 +383,21 @@ const COMMAND LabelArgCommands =
     {"JNC_a16", 0xD2},
     {"JPE_a16", 0xEA},
     {"JPO_a16", 0xE2},
+    {"SHLD_d16", 0x22},
+    {"STA_d16", 0x32},
+    {"LHLD_d16", 0x2A},
+    {"LXI_B_d16", 0x01},
+    {"LXI_D_d16", 0x11},
+    {"LXI_H_d16", 0x21},
+    {"LXI_SP_d16", 0x31},
+
+};
+
+enum CompilerCommands {DW = 1, DD};
+const COMMAND_PROTOTYPE CompilerCommandPrototypes[] = 
+{
+    {"DW" , "d8", ""},
+    {"DD", "d16", ""},
 };
 
 static bool isLabelArgCommand(const std::string& command)
@@ -397,8 +422,19 @@ static int8_t getCommandOpcode(const std::string& command)
     {
         return -1;
     }
-;}
+}
 
+static int getCompilerBuiltInCommand(std::string command) {
+    
+    int i = 1;
+    for (auto comm : CompilerCommandPrototypes) {
+        if (std::get<0>(comm) == command)
+		{
+			return i;
+		}
+        i++;
+    }
+}
 static bool prototypeExists(const std::string& command, const std::string& argument1, const std::string& argument2)
 {
     for (auto comm : Prototypes)
@@ -406,7 +442,7 @@ static bool prototypeExists(const std::string& command, const std::string& argum
         std::string identifier = std::get<0>(comm);
         std::string arg1 = std::get<1>(comm);
         std::string arg2 = std::get<2>(comm);
-        if (identifier == command && arg1 == (argument1 == "label"? "d16" : argument1) && arg2 == argument2)
+        if (identifier == command && arg1 == (argument1 == "label"? "d16" : argument1) && arg2 == (argument2 == "label" ? "d16" : argument2))
         {
             return true;
         }

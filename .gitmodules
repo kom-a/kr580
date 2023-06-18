@@ -8,6 +8,14 @@
 [submodule "UMPK-80/vendor/imgui/imgui_club"]
 	path = UMPK-80/vendor/imgui/imgui_club
 	url = https://github.com/kom-a/imgui_club.git
+	branch = kr580
+[submodule "UMPK-80/vendor/imgui/ImGui-Addons"]
+	path = UMPK-80/vendor/imgui/ImGui-Addons
+	url = https://github.com/gallickgunner/ImGui-Addons.git
+[submodule "UMPK-80/vendor/spdlog"]
+	path = UMPK-80/vendor/spdlog
+	url = https://github.com/gabime/spdlog
+	branch = v1.x
 [submodule "UMPK-80/vendor/imgui/ImGuiColorTextEdit"]
 	path = UMPK-80/vendor/imgui/ImGuiColorTextEdit
 	url = https://github.com/kom-a/ImGuiColorTextEdit.git
