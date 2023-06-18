@@ -278,6 +278,90 @@ void UnknownLabelLeft(std::string label)
 	RaiseError(CompilerError::UNDEFINED_LABEL, "unknown label " + quote(label));
 }
 
+void processLabelArg(
+	std::vector<uint8_t>& byteArray,
+	std::map<std::string, int>& labels,
+	std::vector<std::tuple<std::tuple<int, std::string>, int>>&unrefLabels,
+	std::string label,
+	int offset,
+	int line
+) {
+	if (labels.find(label) != labels.end())
+	{
+		int resAddr = labels[label] + offset;
+		byteArray.push_back(resAddr & 0x000000ff);
+		byteArray.push_back((resAddr & 0x0000ff00) >> 8);
+	}
+	else if (BuilInLabels.find(label) != BuilInLabels.end())
+	{
+		int resAddr = BuilInLabels.at(label);
+		byteArray.push_back(resAddr & 0x000000ff);
+		byteArray.push_back((resAddr & 0x0000ff00) >> 8);
+	}
+	else
+	{
+		unrefLabels.push_back({ {line + 1, std::string(label)}, (int)byteArray.size() });
+		byteArray.push_back(0);
+		byteArray.push_back(0);
+		// do not raise error because for now label is probably below
+		//RaiseError(CompilerError::UNDEFINED_LABEL, "unknown label " + quote(tokens[1]));
+	}
+}
+
+bool isCompilerCommand(std::string command)
+{
+	for (auto comm : CompilerCommandPrototypes) {
+		if (std::get<0>(comm) == command)
+		{
+			return true;
+		}
+	}
+	return false;
+}
+
+void processCompilerCommand(
+	std::vector<uint8_t>& byteArray,
+	std::vector<std::string> tokens
+)
+{
+	int size = tokens.size();
+	std::string command = tokens[0];
+	int commandCode = getCompilerBuiltInCommand(tokens[0]);
+	switch (commandCode) {
+		case DW:
+			if (size != 2)
+			{
+				RaiseError(CompilerError::INVALID_ARGUMENT_NUM, "expected 1 argument, got " + size);
+			}
+			else if (!isData8(tokens[1]))
+			{
+				RaiseError(CompilerError::INVALID_ARGUMENT, "expected 1 byte argument, got " + quote(tokens[1]));
+			}
+			else
+			{
+				byteArray.push_back((uint8_t)strtol(tokens[1].substr(2, 2).c_str(), nullptr, 16));
+			}
+			break;
+		case DD:
+			if (size != 2)
+			{
+				RaiseError(CompilerError::INVALID_ARGUMENT_NUM, "expected 1 argument, got " + size);
+			}
+			else if (!isData16(tokens[1]))
+			{
+				RaiseError(CompilerError::INVALID_ARGUMENT, "expected 2 bytes argument, got " + quote(tokens[1]));
+			}
+			else
+			{
+				// secons byte 
+				byteArray.push_back((uint8_t)strtol(tokens[1].substr(4).c_str(), nullptr, 16));
+				// first byte
+				byteArray.push_back((uint8_t)strtol(tokens[1].substr(2, 2).c_str(), nullptr, 16));
+			}
+			break;
+	}
+}
+
 void Parse(
 	std::string source,
 	std::vector<uint8_t>& byteArray,
@@ -292,6 +376,11 @@ void Parse(
 	if (notJustSpaces(source))
 	{
 		auto tokens = tokenizeCommand(source);
+		if (isCompilerCommand(tokens[0]))
+		{
+			processCompilerCommand(byteArray, tokens);
+			return;
+		}
 		int size = tokens.size();
 		if (size > 3)				//error
 		{
@@ -318,6 +407,8 @@ void Parse(
 				argType2 = "d8";
 			else if (isData16(tokens[2]))
 				argType2 = "d16";
+			else if (isLabel(tokens[2]))
+				argType2 = "label";
 			else
 				RaiseError(CompilerError::INVALID_ARGUMENT, std::string("unknown argument type of ") + quote(tokens[2]));
 
@@ -334,7 +425,7 @@ void Parse(
 					argType2 = tokens[2];
 
 				//PUSH BYTES
-				int8_t code = getCommandOpcode(tokens[0] + "_" + argType1 + "_" + argType2);
+				int8_t code = getCommandOpcode(tokens[0] + "_" + (argType1 == "label" ? "d16" : argType1) + "_" + (argType2 == "label" ? "d16" : argType2));
 				if (code == -1)
 					RaiseError(CompilerError::UNKNOWN_COMMAND, "unknown command prototype " + quote(tokens[0] + " " + argType1 + " " + argType2));
 				byteArray.push_back(code);
@@ -348,6 +439,9 @@ void Parse(
 					// first byte
 					byteArray.push_back((uint8_t)strtol(tokens[1].substr(2, 2).c_str(), nullptr, 16));
 				}
+				else if (argType1 == "label") {
+					processLabelArg(byteArray, labels, unrefLabels, tokens[1], offset, line);
+				}
 
 				if (argType2 == "d8")
 					byteArray.push_back((uint8_t)strtol(tokens[2].substr(2).c_str(), nullptr, 16));
@@ -355,6 +449,9 @@ void Parse(
 				{
 					byteArray.push_back((uint8_t)strtol(tokens[2].substr(4).c_str(), nullptr, 16));
 					byteArray.push_back((uint8_t)strtol(tokens[2].substr(2, 2).c_str(), nullptr, 16));
+				}
+				else if (argType2 == "label") {
+					processLabelArg(byteArray, labels, unrefLabels, tokens[2], offset, line);
 				}
 
 			}
@@ -405,26 +502,7 @@ void Parse(
 				}
 				else if (argType == "label")
 				{
-					if (labels.find(tokens[1]) != labels.end())
-					{
-						int resAddr = labels[tokens[1]] + offset;
-						byteArray.push_back(resAddr & 0x000000ff);
-						byteArray.push_back((resAddr & 0x0000ff00) >> 8);
-					}
-					else if (BuilInLabels.find(tokens[1]) != BuilInLabels.end())
-					{
-						int resAddr = BuilInLabels.at(tokens[1]);
-						byteArray.push_back(resAddr & 0x000000ff);
-						byteArray.push_back((resAddr & 0x0000ff00) >> 8);
-					}
-					else
-					{
-						unrefLabels.push_back({{line + 1, std::string(tokens[1])}, (int)byteArray.size()});
-						byteArray.push_back(0);
-						byteArray.push_back(0);
-						// do not raise error because for now label is probably below
-						//RaiseError(CompilerError::UNDEFINED_LABEL, "unknown label " + quote(tokens[1]));
-					}
+					processLabelArg(byteArray, labels, unrefLabels, tokens[1], offset, line);
 				}
 				else if (isRegister(argType));
 				else

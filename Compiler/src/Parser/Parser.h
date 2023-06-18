@@ -21,8 +21,7 @@ void UnknownLabelLeft(std::string);
 void Parse(
 	std::string source,
 	std::vector<uint8_t>& byteArray,
-	std::map<std::string,
-	int>& labels,
+	std::map<std::string, int>& labels,
 	std::vector<std::tuple<std::tuple<int, std::string>,
 	int>>& unrefLabels,
 	const int& offset,
