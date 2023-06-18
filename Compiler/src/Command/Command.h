@@ -383,6 +383,21 @@ const COMMAND LabelArgCommands =
     {"JNC_a16", 0xD2},
     {"JPE_a16", 0xEA},
     {"JPO_a16", 0xE2},
+    {"SHLD_d16", 0x22},
+    {"STA_d16", 0x32},
+    {"LHLD_d16", 0x2A},
+    {"LXI_B_d16", 0x01},
+    {"LXI_D_d16", 0x11},
+    {"LXI_H_d16", 0x21},
+    {"LXI_SP_d16", 0x31},
+
+};
+
+enum CompilerCommands {DW = 1, DD};
+const COMMAND_PROTOTYPE CompilerCommandPrototypes[] = 
+{
+    {"DW" , "d8", ""},
+    {"DD", "d16", ""},
 };
 
 static bool isLabelArgCommand(const std::string& command)
@@ -409,6 +424,17 @@ static int8_t getCommandOpcode(const std::string& command)
     }
 }
 
+static int getCompilerBuiltInCommand(std::string command) {
+    
+    int i = 1;
+    for (auto comm : CompilerCommandPrototypes) {
+        if (std::get<0>(comm) == command)
+		{
+			return i;
+		}
+        i++;
+    }
+}
 static bool prototypeExists(const std::string& command, const std::string& argument1, const std::string& argument2)
 {
     for (auto comm : Prototypes)
@@ -416,7 +442,7 @@ static bool prototypeExists(const std::string& command, const std::string& argum
         std::string identifier = std::get<0>(comm);
         std::string arg1 = std::get<1>(comm);
         std::string arg2 = std::get<2>(comm);
-        if (identifier == command && arg1 == (argument1 == "label"? "d16" : argument1) && arg2 == argument2)
+        if (identifier == command && arg1 == (argument1 == "label"? "d16" : argument1) && arg2 == (argument2 == "label" ? "d16" : argument2))
         {
             return true;
         }
