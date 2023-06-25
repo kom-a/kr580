@@ -24,7 +24,7 @@ private:
 		float Spacing = 20.0f;
 		float Width = 36.0f;
 		float Height = Width * 2;
-		int ColorEnabled = IM_COL32(250, 80, 80, 255);
+		int ColorEnabled = IM_COL32(250, 250, 80, 255);
 		int ColorDisabled = IM_COL32(50, 20, 20, 255);
 		float Rounding = Width;
 		float Thickness = 5.0f;

@@ -7,55 +7,291 @@
 
 
 // Debug only
-#if 0
-static std::string g_DebugProgramSrc = R"(inf:
-	mvi b, 0xf7
-	mvi c, 0x00
-	mvi d, 0x00
-loop:
-	mov a, b
-	out 0x07
-	in 0x06
-	cpi 0xff
-	jz else
-	xri 0xff
-	cpi 0x04
-	jnz notfour
-	dcr  a
-notfour:
-	mov d, a
+#if 1
+static std::string g_DebugProgramSrc = R"(Init:
+mvi a, 0x00
+mvi b, 0x00
+mvi c, 0x01
+lxi d, SnakeTable
+call ClearDisplay
+call PrintCounter
+
+Loop:
+	call SnakeDisplay
 	mov a, c
-	rlc 
-	add c
-	add d
-	mov d, a
-else:
-	inr c
+	out 0x05
+	cpi 0x80
+	cz IncrementDisplay
+	rlc
+	mov c, a
+	jmp Loop
+
+; Display content of B register to two last slots of display and increments B register
+IncrementDisplay:
+	push psw
+	mvi a, 0x00
+	out 0x05
 	mov a, b
-	rlc 
-	mov b, a 
-	mov a, c
-	cpi 0x02 
-	jnz loop
+	adi 0x01
+	call PrintCounter
+	mov b, a
+	pop psw
+	ret
+
+; Returns only lower 4 bits of Accum in Accum
+GetLower:
+	ani 0x0f
+	ret
+
+; Returns only high 4 bits of Accum in Accum
+GetHigh:
+	ani 0xf0
+	rrc
+	rrc
+	rrc
+	rrc
+	ret
+
+; Returns digit representation of Accum through table at 0x0900
+GetDigitRepresentation:
+	push h
+	push b
+
+	lxi h, DigitRepresentationTable
+	mov b, a
+	mov a, l
+	add b
+	mov l, a
+	
+	mov a, m
+
+	pop b
+	pop h
+	ret
+
+; Display content of A register to last two slots of display
+PrintCounter:
+	push psw	
+	push h
+	push b
+
+	lxi h, 0x0BFF
+
+	mov b, a
+	call GetLower
+	call GetDigitRepresentation
+	mov m, a
+
+	lxi h, 0x0BFE
+
+	mov a, b
+	call GetHigh
+	call GetDigitRepresentation
+	mov m, a
+	
+	call DISPLAY
+	
+	pop b
+	pop h
+	pop psw
+	ret
+
+SnakeDisplay:
+	push psw	
+	push h
+
 	lxi h, 0x0bfa
-clear:
-	mvi m, 0x00
+
+	ldax d
+	mov m, a
 	inx h
+	inx d
+
+	ldax d
+	mov m, a
+	inx h
+	inx d
+
+	ldax d
+	mov m, a
+	inx h
+	inx d
+
+	ldax d
+	mov m, a
+	inx h
+	inx d
+
+	lxi h, SnakeTableEnd
 	mov a, h
-	cpi 0x0c
-	jnz clear
-	lxi h, 0x0bfa
-	m1:
-	mov a, d
-	cpi 0x00
-	jz m2
-	mvi m, 0x5c
-	inx h
-	dcr d
-	jmp m1
-	m2:
-	call 0x01c8
-	jmp inf
+	cmp d
+	jnz _SnakeDisplayExit
+	mov a, l
+	cmp e
+	jnz _SnakeDisplayExit
+	lxi d, SnakeTable
+	
+	_SnakeDisplayExit:
+	call DISPLAY	
+	pop h
+	pop psw
+	ret
+
+ClearDisplay:
+	push psw
+	push h
+	
+	mvi a, 0x00
+	
+	lxi h, 0x0BFA
+	mov m, a
+
+	lxi h, 0x0BFB
+	mov m, a
+
+	lxi h, 0x0BFC
+	mov m, a
+
+	lxi h, 0x0BFD
+	mov m, a
+
+	lxi h, 0x0BFE
+	mov m, a
+
+	lxi h, 0x0BFF
+	mov m, a
+
+	call DISPLAY
+	pop h
+	pop psw
+	ret
+
+DigitRepresentationTable:
+	dw 0x3f
+	dw 0x06
+	dw 0x5b
+	dw 0x4f
+	dw 0x66
+	dw 0x6d
+	dw 0x7d
+	dw 0x07
+	dw 0x7f
+	dw 0x6f
+	dw 0x77
+	dw 0x7c
+	dw 0x39
+	dw 0x5e
+	dw 0x79
+	dw 0x71
+
+SnakeTable:
+	dw 0x00
+	dw 0x00
+	dw 0x00
+	dw 0x00
+
+	dw 0x00
+	dw 0x40
+	dw 0x40
+	dw 0x00
+
+	dw 0x40
+	dw 0x40
+	dw 0x40
+	dw 0x40
+
+	dw 0x70
+	dw 0x40
+	dw 0x40
+	dw 0x46
+
+	dw 0x79
+	dw 0x40
+	dw 0x40
+	dw 0x4f
+
+	dw 0x79
+	dw 0x49
+	dw 0x49
+	dw 0x4f
+
+	dw 0x7f
+	dw 0x49
+	dw 0x49
+	dw 0x7f
+
+	dw 0x7f
+	dw 0x79
+	dw 0x4f
+	dw 0x7f
+
+	dw 0x7f
+	dw 0x7f
+	dw 0x7f
+	dw 0x7f
+
+	dw 0x00
+	dw 0x00
+	dw 0x00
+	dw 0x00
+
+	dw 0x00
+	dw 0x00
+	dw 0x00
+	dw 0x00
+
+	dw 0x7f
+	dw 0x7f
+	dw 0x7f
+	dw 0x7f
+
+	dw 0x7f
+	dw 0x7f
+	dw 0x7f
+	dw 0x7f
+
+	dw 0x00
+	dw 0x00
+	dw 0x00
+	dw 0x00
+
+	dw 0x00
+	dw 0x00
+	dw 0x00
+	dw 0x00
+
+	dw 0x7f
+	dw 0x7f
+	dw 0x7f
+	dw 0x7f
+
+	dw 0x7f
+	dw 0x7f
+	dw 0x7f
+	dw 0x7f
+
+	dw 0x00
+	dw 0x00
+	dw 0x00
+	dw 0x00
+
+	dw 0x00
+	dw 0x00
+	dw 0x00
+	dw 0x00
+
+	dw 0x7f
+	dw 0x7f
+	dw 0x7f
+	dw 0x7f
+
+	dw 0x7f
+	dw 0x7f
+	dw 0x7f
+	dw 0x7f
+SnakeTableEnd:
+
+
 )";
 #else 
 static std::string g_DebugProgramSrc = R"(inf:
@@ -137,7 +373,7 @@ void EditorView::Render(KR580VM80A* emu)
 	const uint32_t offset = 0x0800;	// Hardcode this for now
 
 	auto cpos = m_Editor.GetCursorPosition();
-	static const char* fileToEdit = "C:/Users/Kamil/Desktop/source_code.asm";
+	//static const char* fileToEdit = "C:/Users/Kamil/Desktop/source_code.asm";
 
 	ImGui::Begin("Editor", &m_Open, ImGuiWindowFlags_HorizontalScrollbar);
 
@@ -147,8 +383,8 @@ void EditorView::Render(KR580VM80A* emu)
 
 	m_Editor.Render("Editor", editor_size);
 	ImGui::Text("%d:%-6d", cpos.mLine + 1, cpos.mColumn + 1);
-	ImGui::SameLine();
-	ImGui::Text("%s%s", fileToEdit, m_Editor.CanUndo() ? "*" : " ");
+	//ImGui::SameLine();
+	//ImGui::Text("%s%s", fileToEdit, m_Editor.CanUndo() ? "*" : " ");
 	
 	ImGui::End();
 }

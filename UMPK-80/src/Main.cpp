@@ -1,4 +1,5 @@
 #include <iostream>
+#include <windows.h>
 
 #include <KR580.h>
 
@@ -54,8 +55,16 @@ void DecodeDisplayProc(KR580VM80A* emu)
 	for (int i = 0; i < 6; i++)
 		emu->Memory[0x0BFA + i] = GetDisplayRepresentation(emu->Memory[0x0BF0 + 5 - i]);
 }
-
+#ifdef DEBUG
 int main()
+#else
+int WINAPI WinMain(
+	HINSTANCE hInstance,
+	HINSTANCE hPrevInstance,
+	LPSTR     lpCmdLine,
+	int       nShowCmd
+)
+#endif
 {
 	KR580::Init();
 	Log::Init();

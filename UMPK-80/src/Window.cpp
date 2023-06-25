@@ -61,7 +61,7 @@ bool Window::Init()
 	if (m_GLFWWindow == NULL)
 		return false;
 	glfwMakeContextCurrent(m_GLFWWindow);
-	glfwSwapInterval(1);
+	glfwSwapInterval(0);
 	glfwSetWindowUserPointer(m_GLFWWindow, this);
 	glfwSetWindowSizeCallback(m_GLFWWindow, GLFWWindowResizeCallback);
 
@@ -415,8 +415,8 @@ void Window::Render(KR580VM80A* emu)
 	RenderMainMenubar(emu);
 	RenderViews(emu);
 
-	ImGui::ShowDemoWindow();
-	ImGui::ShowMetricsWindow();
+	//ImGui::ShowDemoWindow();
+	//ImGui::ShowMetricsWindow();
 }
 
 void GLFWErrorCallback(int error, const char* description)
