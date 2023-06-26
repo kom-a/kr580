@@ -16,7 +16,7 @@ const std::map<std::string, int> BuilInLabels
     {"FIX_SLEEP", 0x0429},
     {"SLEEP", 0x0430},
     {"MULT", 0x04E1},
-    {"DETECT_KEYS", 0x0429},
+    {"DETECT_KEYS", 0x0185},
     {"SCAN_KEYBOARD", 0x014B},
 };
 
